@@ -169,13 +169,21 @@ class LotusCycleApp {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('📜 History clicked!');
+                console.log('modalController exists:', !!window.modalController);
 
                 if (window.modalController) {
+                    console.log('Calling modalController.open("history")');
                     window.modalController.open('history');
                 } else {
                     console.warn('ModalController not ready, using fallback');
-                    const modal = document.getElementById('history-modal');
-                    if (modal) modal.classList.remove('hidden');
+                }
+
+                // FORCE fallback to ensure it opens
+                const modal = document.getElementById('history-modal');
+                console.log('history-modal element:', modal);
+                if (modal) {
+                    console.log('Removing hidden class from history-modal');
+                    modal.classList.remove('hidden');
                 }
             }, { capture: true });
 
@@ -184,13 +192,21 @@ class LotusCycleApp {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('📝 Log clicked!');
+                console.log('modalController exists:', !!window.modalController);
 
                 if (window.modalController) {
+                    console.log('Calling modalController.open("log")');
                     window.modalController.open('log');
                 } else {
                     console.warn('ModalController not ready, using fallback');
-                    const modal = document.getElementById('log-modal');
-                    if (modal) modal.classList.remove('hidden');
+                }
+
+                // FORCE fallback to ensure it opens
+                const modal = document.getElementById('log-modal');
+                console.log('log-modal element:', modal);
+                if (modal) {
+                    console.log('Removing hidden class from log-modal');
+                    modal.classList.remove('hidden');
                 }
             }, { capture: true });
 
@@ -199,11 +215,22 @@ class LotusCycleApp {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('🌿 Rituals clicked!');
+                console.log('scrollSystem exists:', !!window.scrollSystem);
 
                 if (window.scrollSystem) {
+                    console.log('Calling scrollSystem.openRituals()');
                     window.scrollSystem.openRituals();
                 } else {
                     console.warn('ScrollSystem not ready');
+                }
+
+                // FORCE fallback
+                const ritualsScroll = document.getElementById('scroll-rituals');
+                console.log('scroll-rituals element:', ritualsScroll);
+                if (ritualsScroll) {
+                    console.log('Removing hidden and adding open to scroll-rituals');
+                    ritualsScroll.classList.remove('hidden');
+                    setTimeout(() => ritualsScroll.classList.add('open'), 10);
                 }
             }, { capture: true });
 
