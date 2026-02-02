@@ -6,6 +6,12 @@
 class LotusCycleApp {
     constructor() {
         console.log('🚀 LotusCycleApp constructor starting...');
+
+        // Debug all clicks globally
+        document.addEventListener('click', (e) => {
+            console.log('🖱️ CLICK:', e.target.tagName, e.target.id, e.target.className);
+        }, true);
+
         this.init();
     }
 
@@ -140,82 +146,70 @@ class LotusCycleApp {
     setupNavigation() {
         console.log('🔗 Setting up navigation listeners...');
 
-        // Debug: Log all clicks to see what's being targeted
-        document.addEventListener('click', (e) => {
-            console.log('🖱️ Click detected on:', e.target);
-        });
+        // Wait a tick to ensure DOM is fully ready
+        setTimeout(() => {
+            // Verify buttons exist
+            const historyBtn = document.getElementById('nav-history');
+            const logBtn = document.getElementById('nav-log');
+            const ritualsBtn = document.getElementById('nav-rituals');
 
-        const bindButton = (id, handler) => {
-            const btn = document.getElementById(id);
-            if (!btn) {
-                console.warn(`⚠️ Button ${id} not found`);
+            console.log('Button check:', {
+                history: !!historyBtn,
+                log: !!logBtn,
+                rituals: !!ritualsBtn
+            });
+
+            if (!historyBtn || !logBtn || !ritualsBtn) {
+                console.error('❌ One or more buttons not found in DOM');
                 return;
             }
 
-            const unifiedHandler = (e) => {
-                // Prevent ghost clicks/double triggers
-                if (e.type === 'touchstart') {
-                    this.lastTouchTime = Date.now();
-                } else if (e.type === 'click') {
-                    if (this.lastTouchTime && (Date.now() - this.lastTouchTime < 500)) return;
-                }
-
-                console.log(`🎯 ${id} CLICKED/TOUCHED`);
+            // History Button
+            historyBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                console.log('📜 History clicked!');
 
-                // Visual feedback
-                this.createBurst(btn);
-                handler();
-            };
+                if (window.modalController) {
+                    window.modalController.open('history');
+                } else {
+                    console.warn('ModalController not ready, using fallback');
+                    const modal = document.getElementById('history-modal');
+                    if (modal) modal.classList.remove('hidden');
+                }
+            }, { capture: true });
 
-            btn.addEventListener('click', unifiedHandler);
-            btn.addEventListener('touchstart', unifiedHandler, { passive: false });
+            // Log Button
+            logBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('📝 Log clicked!');
 
-            console.log(`✅ Bound events to ${id}`);
-        };
+                if (window.modalController) {
+                    window.modalController.open('log');
+                } else {
+                    console.warn('ModalController not ready, using fallback');
+                    const modal = document.getElementById('log-modal');
+                    if (modal) modal.classList.remove('hidden');
+                }
+            }, { capture: true });
 
-        // Log Button
-        bindButton('nav-log', () => {
-            console.log('📝 Log button clicked');
-            this.createBurst(document.getElementById('nav-log'));
+            // Rituals Button
+            ritualsBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🌿 Rituals clicked!');
 
-            if (window.modalController) {
-                window.modalController.open('log');
-            } else {
-                console.error('❌ ModalController not ready');
-                // Fallback attempt
-                const modal = document.getElementById('log-modal');
-                if (modal) modal.classList.remove('hidden');
-            }
-        });
+                if (window.scrollSystem) {
+                    window.scrollSystem.openRituals();
+                } else {
+                    console.warn('ScrollSystem not ready');
+                }
+            }, { capture: true });
 
-        // Rituals Button
-        bindButton('nav-rituals', () => {
-            console.log('🌿 Rituals button clicked');
-            this.createBurst(document.getElementById('nav-rituals'));
+            console.log('✅ All navigation listeners bound successfully');
 
-            if (window.scrollSystem) {
-                window.scrollSystem.openRituals();
-            } else {
-                console.error('❌ ScrollSystem not ready');
-            }
-        });
-
-        // History Button
-        bindButton('nav-history', () => {
-            console.log('📜 History button clicked');
-            this.createBurst(document.getElementById('nav-history'));
-
-            if (window.modalController) {
-                window.modalController.open('history');
-            } else {
-                console.error('❌ ModalController not ready');
-                // Fallback attempt
-                const modal = document.getElementById('history-modal');
-                if (modal) modal.classList.remove('hidden');
-            }
-        });
+        }, 100);
     }
 
     createBurst(el) {
