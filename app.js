@@ -277,14 +277,16 @@ class LotusCycleApp {
 
                     if (content && phaseData.rituals) {
                         content.innerHTML = `
-                            <div class="space-y-6">
-                                <p class="text-lg italic text-[#ffd700]/80 text-center mb-6">Sacred practices for your ${phaseData.name}</p>
-                                ${phaseData.rituals.map(r => `
-                                    <div class="p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 transition-all">
-                                        <h4 class="font-display text-2xl text-[#ffd700] mb-3 tracking-wide">${r.name}</h4>
-                                        <p class="text-base leading-relaxed text-[#faf4e4]/90">${r.desc}</p>
-                                    </div>
-                                `).join('')}
+                            <div class="animate-fade-in silk-texture">
+                                <p class="italic mb-8 text-[#faf4e4] opacity-80 text-center text-lg tracking-wide" style="font-weight: 300; line-height: 1.8;">Sacred practices to align your spirit with the ${phaseData.name}. Embrace these rituals to harmonize with your natural rhythm.</p>
+                                <div class="space-y-8">
+                                    ${phaseData.rituals.map(r => `
+                                        <div class="p-6 bg-white/5 border border-white/10 rounded-3xl shadow-xl transition-all hover:bg-white/10">
+                                            <h4 class="font-display text-2xl text-[#ffd700] mb-3 tracking-[0.15em] font-light">${r.name}</h4>
+                                            <p class="text-base leading-relaxed text-[#faf4e4]/90 tracking-wide" style="line-height: 1.8;">${r.desc}</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
                             </div>
                         `;
                     }

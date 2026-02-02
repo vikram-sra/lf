@@ -198,44 +198,53 @@ class ModalController {
     }
 
     generateCalendar(currentDay, cycleLength) {
+        const state = window.cycleStore.getState();
+        const lastPeriodStart = new Date(state.settings.lastPeriodStart);
         const days = [];
+
         for (let day = 1; day <= cycleLength; day++) {
             const phase = getPhaseFromDay(day, cycleLength);
             const phaseData = getPhaseData(phase);
             const isToday = day === currentDay;
             const isFuture = day > currentDay;
 
+            // Calculate the real date for this cycle day
+            const realDate = new Date(lastPeriodStart);
+            realDate.setDate(lastPeriodStart.getDate() + (day - 1));
+            const monthDay = realDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
             days.push(`
-                <div class="relative flex flex-col items-center justify-center p-2 rounded-xl transition-all ${isToday ? 'ring-2 ring-[#ffd700] shadow-lg shadow-[#ffd700]/20' : ''}"
-                     style="background-color: ${phaseData.color}${isFuture ? '40' : '80'};">
-                    <div class="text-xs font-bold text-white/90">${day}</div>
-                    ${isToday ? '<div class="absolute -top-1 -right-1 w-3 h-3 bg-[#ffd700] rounded-full animate-pulse"></div>' : ''}
+                <div class="relative flex flex-col items-center justify-center p-3 rounded-xl transition-all ${isToday ? 'ring-2 ring-[#ffd700] shadow-lg shadow-[#ffd700]/30 scale-105' : 'hover:scale-105'}"
+                     style="background: linear-gradient(135deg, ${phaseData.color}${isFuture ? '30' : '70'}, ${phaseData.color}${isFuture ? '50' : 'A0'});">
+                    <div class="text-xs font-bold text-white/90 mb-0.5">Day ${day}</div>
+                    <div class="text-[9px] text-white/60 font-medium">${monthDay}</div>
+                    ${isToday ? '<div class="absolute -top-1.5 -right-1.5 w-3 h-3 bg-[#ffd700] rounded-full animate-pulse shadow-lg shadow-[#ffd700]/50"></div>' : ''}
                 </div>
             `);
         }
 
         return `
             <div class="mb-8">
-                <h3 class="font-display text-xl text-[#ffd700] mb-4 tracking-widest uppercase text-center">Cycle Calendar</h3>
-                <div class="grid grid-cols-7 gap-2 mb-4">
+                <h3 class="font-display text-2xl text-[#ffd700] mb-6 tracking-widest uppercase text-center">Cycle Calendar</h3>
+                <div class="grid grid-cols-7 gap-2 mb-6">
                     ${days.join('')}
                 </div>
-                <div class="flex justify-center gap-4 text-xs mt-4">
+                <div class="flex flex-wrap justify-center gap-4 text-xs mt-6 pb-6 border-b border-white/10">
                     <div class="flex items-center gap-2">
-                        <div class="w-4 h-4 rounded" style="background-color: #7A1E2D"></div>
-                        <span class="text-white/70">Menstrual</span>
+                        <div class="w-5 h-5 rounded-lg shadow-md" style="background: linear-gradient(135deg, #7A1E2D, #A02838);"></div>
+                        <span class="text-white/80 font-medium">Menstrual</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <div class="w-4 h-4 rounded" style="background-color: #7FB3A6"></div>
-                        <span class="text-white/70">Follicular</span>
+                        <div class="w-5 h-5 rounded-lg shadow-md" style="background: linear-gradient(135deg, #7FB3A6, #9CC5BB);"></div>
+                        <span class="text-white/80 font-medium">Follicular</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <div class="w-4 h-4 rounded" style="background-color: #F2C94C"></div>
-                        <span class="text-white/70">Ovulatory</span>
+                        <div class="w-5 h-5 rounded-lg shadow-md" style="background: linear-gradient(135deg, #F2C94C, #F7D76E);"></div>
+                        <span class="text-white/80 font-medium">Ovulatory</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <div class="w-4 h-4 rounded" style="background-color: #6B5B95"></div>
-                        <span class="text-white/70">Luteal</span>
+                        <div class="w-5 h-5 rounded-lg shadow-md" style="background: linear-gradient(135deg, #6B5B95, #8B7BA8);"></div>
+                        <span class="text-white/80 font-medium">Luteal</span>
                     </div>
                 </div>
             </div>
