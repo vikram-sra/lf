@@ -234,6 +234,19 @@
         </div>
     </div>
 
+    <!-- Rituals Modal -->
+    <div id="scroll-rituals" class="modal hidden fixed inset-0 z-[200] flex items-center justify-center">
+        <div class="modal-backdrop absolute inset-0 bg-black/60"></div>
+        <div class="modal-content parchment-scroll relative z-10 w-[90vw] max-w-2xl max-h-[85vh] overflow-y-auto">
+            <button id="close-rituals-modal"
+                class="absolute top-6 right-6 text-3xl opacity-50 hover:opacity-100 transition-opacity modal-close">&times;</button>
+            <h2
+                class="font-display text-4xl text-[#ffd700] mb-8 border-b border-white/10 pb-6 tracking-widest uppercase">
+                Sacred Rituals</h2>
+            <div id="rituals-content" class="space-y-6"></div>
+        </div>
+    </div>
+
     <!-- Core Engine Scripts -->
     <script src="https://unpkg.com/zustand@4.4.7/umd/zustand.production.js"></script>
     <script src="https://unpkg.com/dexie@3.2.4/dist/dexie.js"></script>

@@ -153,10 +153,16 @@ class ModalController {
         const body = document.getElementById('history-body');
         const state = window.cycleStore.getState();
         const logs = [...state.logs].sort((a, b) => new Date(b.date) - new Date(a.date));
+        const cycleLength = state.settings.cycleLength;
+        const currentDay = state.getCycleDay();
+
+        // Generate calendar for current cycle
+        const calendarHTML = this.generateCalendar(currentDay, cycleLength);
 
         if (!logs || logs.length === 0) {
             body.innerHTML = `
-                <div class="text-center py-20 opacity-60">
+                ${calendarHTML}
+                <div class="text-center py-12 opacity-60 mt-8">
                     <span class="text-5xl block mb-4">📜</span>
                     <p class="italic font-display text-xl">The river is calm. No entries recorded yet.</p>
                 </div>
@@ -165,9 +171,11 @@ class ModalController {
         }
 
         body.innerHTML = `
-            <div class="space-y-6 animate-fade-in-up">
+            ${calendarHTML}
+            <h3 class="font-display text-2xl text-[#ffd700] mt-12 mb-6 tracking-widest uppercase border-t border-white/10 pt-8">Log History</h3>
+            <div class="space-y-6">
                 ${logs.map(log => {
-            const phase = getPhaseFromDay(log.day, state.settings.cycleLength);
+            const phase = getPhaseFromDay(log.day, cycleLength);
             const phaseData = getPhaseData(phase);
             return `
                         <div class="relative p-8 bg-white/5 rounded-[2rem] border border-white/10 hover:border-[#ffd700]/30 transition-all group">
@@ -185,6 +193,51 @@ class ModalController {
                         </div>
                     `;
         }).join('')}
+            </div>
+        `;
+    }
+
+    generateCalendar(currentDay, cycleLength) {
+        const days = [];
+        for (let day = 1; day <= cycleLength; day++) {
+            const phase = getPhaseFromDay(day, cycleLength);
+            const phaseData = getPhaseData(phase);
+            const isToday = day === currentDay;
+            const isFuture = day > currentDay;
+
+            days.push(`
+                <div class="relative flex flex-col items-center justify-center p-2 rounded-xl transition-all ${isToday ? 'ring-2 ring-[#ffd700] shadow-lg shadow-[#ffd700]/20' : ''}"
+                     style="background-color: ${phaseData.color}${isFuture ? '40' : '80'};">
+                    <div class="text-xs font-bold text-white/90">${day}</div>
+                    ${isToday ? '<div class="absolute -top-1 -right-1 w-3 h-3 bg-[#ffd700] rounded-full animate-pulse"></div>' : ''}
+                </div>
+            `);
+        }
+
+        return `
+            <div class="mb-8">
+                <h3 class="font-display text-xl text-[#ffd700] mb-4 tracking-widest uppercase text-center">Cycle Calendar</h3>
+                <div class="grid grid-cols-7 gap-2 mb-4">
+                    ${days.join('')}
+                </div>
+                <div class="flex justify-center gap-4 text-xs mt-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded" style="background-color: #7A1E2D"></div>
+                        <span class="text-white/70">Menstrual</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded" style="background-color: #7FB3A6"></div>
+                        <span class="text-white/70">Follicular</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded" style="background-color: #F2C94C"></div>
+                        <span class="text-white/70">Ovulatory</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded" style="background-color: #6B5B95"></div>
+                        <span class="text-white/70">Luteal</span>
+                    </div>
+                </div>
             </div>
         `;
     }

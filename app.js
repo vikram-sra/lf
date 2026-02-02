@@ -249,22 +249,45 @@ class LotusCycleApp {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('🌿 Rituals clicked!');
-                console.log('scrollSystem exists:', !!window.scrollSystem);
 
-                if (window.scrollSystem) {
-                    console.log('Calling scrollSystem.openRituals()');
-                    window.scrollSystem.openRituals();
-                } else {
-                    console.warn('ScrollSystem not ready');
-                }
+                // FORCE modal to open
+                const modal = document.getElementById('scroll-rituals');
+                console.log('scroll-rituals element:', modal);
+                if (modal) {
+                    console.log('Forcing scroll-rituals to be visible');
+                    modal.classList.remove('hidden');
+                    // Force EVERYTHING to make it visible
+                    modal.style.display = 'flex';
+                    modal.style.position = 'fixed';
+                    modal.style.top = '0px';
+                    modal.style.left = '0px';
+                    modal.style.width = '100vw';
+                    modal.style.height = '100vh';
+                    modal.style.opacity = '1';
+                    modal.style.visibility = 'visible';
+                    modal.style.zIndex = '99999';
+                    modal.style.backgroundColor = 'rgba(5, 17, 26, 0.95)';
 
-                // FORCE fallback
-                const ritualsScroll = document.getElementById('scroll-rituals');
-                console.log('scroll-rituals element:', ritualsScroll);
-                if (ritualsScroll) {
-                    console.log('Removing hidden and adding open to scroll-rituals');
-                    ritualsScroll.classList.remove('hidden');
-                    setTimeout(() => ritualsScroll.classList.add('open'), 10);
+                    // Render rituals content
+                    const state = window.cycleStore.getState();
+                    const day = state.getCycleDay();
+                    const phase = getPhaseFromDay(day, state.settings.cycleLength);
+                    const phaseData = getPhaseData(phase);
+                    const content = document.getElementById('rituals-content');
+
+                    if (content && phaseData.rituals) {
+                        content.innerHTML = `
+                            <div class="space-y-6">
+                                <p class="text-lg italic text-[#ffd700]/80 text-center mb-6">Sacred practices for your ${phaseData.name}</p>
+                                ${phaseData.rituals.map(r => `
+                                    <div class="p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 transition-all">
+                                        <h4 class="font-display text-2xl text-[#ffd700] mb-3 tracking-wide">${r.name}</h4>
+                                        <p class="text-base leading-relaxed text-[#faf4e4]/90">${r.desc}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    }
                 }
             }, { capture: true });
 
