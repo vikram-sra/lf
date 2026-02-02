@@ -146,33 +146,33 @@ class LotusCycleApp {
         });
 
         const bindButton = (id, handler) => {
-            // Try both ID and class selection to be sure
-            const btn = document.getElementById(id) || document.querySelector(`#${id}`);
+            const btn = document.getElementById(id);
+            if (!btn) {
+                console.warn(`⚠️ Button ${id} not found`);
+                return;
+            }
 
-            if (btn) {
-                // Remove potential overlapping listeners
-                const newBtn = btn.cloneNode(true);
-                if (btn.parentNode) {
-                    btn.parentNode.replaceChild(newBtn, btn);
+            const unifiedHandler = (e) => {
+                // Prevent ghost clicks/double triggers
+                if (e.type === 'touchstart') {
+                    this.lastTouchTime = Date.now();
+                } else if (e.type === 'click') {
+                    if (this.lastTouchTime && (Date.now() - this.lastTouchTime < 500)) return;
                 }
 
-                newBtn.onclick = (e) => {
-                    e.stopPropagation(); // Stop bubbling immediately
-                    console.log(`🎯 ${id} CLICKED (captured)`);
-                    handler();
-                };
+                console.log(`🎯 ${id} CLICKED/TOUCHED`);
+                e.preventDefault();
+                e.stopPropagation();
 
-                // Also add touchstart for mobile responsiveness speed
-                newBtn.ontouchstart = (e) => {
-                    e.stopPropagation();
-                    console.log(`👆 ${id} TOUCHED`);
-                    handler();
-                };
+                // Visual feedback
+                this.createBurst(btn);
+                handler();
+            };
 
-                console.log(`✅ Listener forcefully bound to ${id}`);
-            } else {
-                console.warn(`⚠️ Button ${id} not found in DOM`);
-            }
+            btn.addEventListener('click', unifiedHandler);
+            btn.addEventListener('touchstart', unifiedHandler, { passive: false });
+
+            console.log(`✅ Bound events to ${id}`);
         };
 
         // Log Button
