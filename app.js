@@ -184,12 +184,17 @@ class LotusCycleApp {
                 if (modal) {
                     console.log('Forcing history-modal to be visible with inline styles');
                     modal.classList.remove('hidden');
-                    // Force visibility with inline styles
+                    // Force EVERYTHING to make it visible
                     modal.style.display = 'flex';
+                    modal.style.position = 'fixed';
+                    modal.style.top = '0px';
+                    modal.style.left = '0px';
+                    modal.style.width = '100vw';
+                    modal.style.height = '100vh';
                     modal.style.opacity = '1';
                     modal.style.visibility = 'visible';
-                    modal.style.zIndex = '9999';
-                    modal.style.backgroundColor = 'rgba(255, 0, 0, 0.5)'; // DEBUG: Red background to see if modal appears
+                    modal.style.zIndex = '99999';
+                    modal.style.backgroundColor = 'rgba(5, 17, 26, 0.95)'; // Match app background
 
                     // Force render content
                     if (window.modalController) {
@@ -219,12 +224,17 @@ class LotusCycleApp {
                 if (modal) {
                     console.log('Forcing log-modal to be visible with inline styles');
                     modal.classList.remove('hidden');
-                    // Force visibility with inline styles
+                    // Force EVERYTHING to make it visible
                     modal.style.display = 'flex';
+                    modal.style.position = 'fixed';
+                    modal.style.top = '0px';
+                    modal.style.left = '0px';
+                    modal.style.width = '100vw';
+                    modal.style.height = '100vh';
                     modal.style.opacity = '1';
                     modal.style.visibility = 'visible';
-                    modal.style.zIndex = '9999';
-                    modal.style.backgroundColor = 'rgba(0, 255, 0, 0.5)'; // DEBUG: Green background to see if modal appears
+                    modal.style.zIndex = '99999';
+                    modal.style.backgroundColor = 'rgba(5, 17, 26, 0.95)'; // Match app background
 
                     // Force render content
                     if (window.modalController) {

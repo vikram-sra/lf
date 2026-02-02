@@ -39,7 +39,9 @@ class ModalController {
     }
 
     closeAll() {
-        Object.values(this.modals).forEach(m => m.classList.add('hidden'));
+        Object.values(this.modals).forEach(m => {
+            if (m) m.classList.add('hidden');
+        });
 
         // Also close rituals scroll if it's treated as a modal
         const rituals = document.getElementById('scroll-rituals');
