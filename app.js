@@ -189,6 +189,13 @@ class LotusCycleApp {
                     modal.style.opacity = '1';
                     modal.style.visibility = 'visible';
                     modal.style.zIndex = '9999';
+                    modal.style.backgroundColor = 'rgba(255, 0, 0, 0.5)'; // DEBUG: Red background to see if modal appears
+
+                    // Force render content
+                    if (window.modalController) {
+                        console.log('Manually calling renderHistoryContent');
+                        window.modalController.renderHistoryContent();
+                    }
                 }
             }, { capture: true });
 
@@ -217,6 +224,13 @@ class LotusCycleApp {
                     modal.style.opacity = '1';
                     modal.style.visibility = 'visible';
                     modal.style.zIndex = '9999';
+                    modal.style.backgroundColor = 'rgba(0, 255, 0, 0.5)'; // DEBUG: Green background to see if modal appears
+
+                    // Force render content
+                    if (window.modalController) {
+                        console.log('Manually calling renderLogContent');
+                        window.modalController.renderLogContent();
+                    }
                 }
             }, { capture: true });
 
