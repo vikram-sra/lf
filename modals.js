@@ -64,33 +64,36 @@ class ModalController {
         const phase = state.getCurrentPhase();
 
         body.innerHTML = `
-            <div class="space-y-10 animate-fade-in-up">
-                <div class="bg-white/5 p-8 rounded-[2rem] border border-white/10">
-                    <h3 class="font-display text-2xl mb-6 text-[#ffd700] tracking-widest uppercase opacity-80">Today's Flow</h3>
-                    <div class="flex gap-4 justify-center mt-4">
+            <div class="space-y-6 animate-fade-in-up">
+                <!-- Flow Section -->
+                <div class="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-sm">
+                    <h3 class="font-display text-lg mb-3 text-[#ffd700] tracking-[0.15em] uppercase opacity-90 font-light">Today's Flow</h3>
+                    <div class="flex gap-3 justify-center">
                         ${[1, 2, 3, 4, 5].map(v => `
-                            <button class="flow-dot w-14 h-14 rounded-full border border-white/20 flex items-center justify-center font-bold text-xl hover:bg-[#ffd700]/20 hover:border-[#ffd700] transition-all" data-value="${v}">
+                            <button class="flow-dot w-12 h-12 rounded-full border-2 border-white/20 flex items-center justify-center font-bold text-lg hover:bg-[#ffd700]/20 hover:border-[#ffd700] transition-all hover:scale-110" data-value="${v}">
                                 ${v}
                             </button>
                         `).join('')}
                     </div>
                 </div>
                 
-                <div class="bg-white/5 p-8 rounded-[2rem] border border-white/10">
-                    <h3 class="font-display text-2xl mb-6 text-[#ffd700] tracking-widest uppercase opacity-80">Sacred Mood</h3>
-                    <div class="grid grid-cols-4 gap-4 mt-4">
+                <!-- Mood Section -->
+                <div class="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-sm">
+                    <h3 class="font-display text-lg mb-3 text-[#ffd700] tracking-[0.15em] uppercase opacity-90 font-light">Sacred Mood</h3>
+                    <div class="grid grid-cols-4 gap-2">
                         ${MOOD_OPTIONS.map(m => `
-                            <button class="mood-btn p-4 rounded-2xl border border-white/10 bg-white/5 hover:bg-[#ffd700]/10 hover:border-[#ffd700] transition-all flex flex-col items-center gap-2" data-mood="${m.label}">
-                                <span class="text-3xl">${m.emoji}</span>
-                                <span class="text-[10px] uppercase tracking-widest opacity-60">${m.label}</span>
+                            <button class="mood-btn p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-[#ffd700]/10 hover:border-[#ffd700] transition-all flex flex-col items-center gap-1.5" data-mood="${m.label}">
+                                <span class="text-2xl">${m.emoji}</span>
+                                <span class="text-[9px] uppercase tracking-widest opacity-60">${m.label}</span>
                             </button>
                         `).join('')}
                     </div>
                 </div>
 
-                <div class="bg-white/5 p-8 rounded-[2rem] border border-white/10">
-                    <h3 class="font-display text-2xl mb-6 text-[#ffd700] tracking-widest uppercase opacity-80">Notes of the Heart</h3>
-                    <textarea id="log-notes" class="w-full bg-transparent border border-white/10 rounded-2xl p-6 h-48 focus:outline-none focus:border-[#ffd700]/40 font-body text-lg leading-relaxed resize-none text-[#faf4e4]/90" placeholder="Let your thoughts flow..."></textarea>
+                <!-- Notes Section -->
+                <div class="bg-white/5 p-5 rounded-2xl border border-white/10 backdrop-blur-sm">
+                    <h3 class="font-display text-lg mb-3 text-[#ffd700] tracking-[0.15em] uppercase opacity-90 font-light">Notes of the Heart</h3>
+                    <textarea id="log-notes" class="w-full bg-transparent border border-white/10 rounded-xl p-4 h-28 focus:outline-none focus:border-[#ffd700]/40 font-body text-sm leading-relaxed resize-none text-[#faf4e4]/90 placeholder:text-white/30" placeholder="Let your thoughts flow..."></textarea>
                 </div>
             </div>
         `;
