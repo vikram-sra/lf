@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>LotusCycle Aura | Sacred Cycle Tracker</title>
+    <meta name="description"
+        content="A photorealistic, biophilic menstrual cycle tracker. Track your sacred rhythm with the Lotus Dial Aura.">
+    <meta name="theme-color" content="#0a2a3a">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="premium-effects.css">
+</head>
+
+<body class="bg-river-deep select-none">
+
+    <!-- Environmental Layers -->
+    <div id="river-container">
+        <canvas id="river-canvas"></canvas>
+    </div>
+    <div id="mist-container">
+        <canvas id="mist-canvas"></canvas>
+    </div>
+    <div class="sacred-grid"></div>
+    <div id="ambient-overlay" class="fixed inset-0 pointer-events-none -z-5 opacity-30 mix-blend-soft-light"></div>
+
+    <!-- Sacred Filters -->
+    <svg width="0" height="0" class="absolute hidden">
+        <defs>
+            <filter id="crystal-refraction" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur" />
+                <feSpecularLighting in="blur" surfaceScale="5" specularConstant="1" specularExponent="20"
+                    lighting-color="#ffffff" result="spec">
+                    <feDistantLight azimuth="45" elevation="45" />
+                </feSpecularLighting>
+                <feComposite in="spec" in2="SourceGraphic" operator="in" />
+            </filter>
+
+            <filter id="silk-grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch" />
+                <feColorMatrix type="saturate" values="0" />
+                <feComponentTransfer>
+                    <feFuncA type="linear" slope="0.05" />
+                </feComponentTransfer>
+                <feComposite operator="in" in2="SourceGraphic" />
+            </filter>
+
+            <radialGradient id="sun-crystal-gradient">
+                <stop offset="0%" stop-color="#fff" />
+                <stop offset="30%" stop-color="#fff5cc" />
+                <stop offset="60%" stop-color="#ffd700" />
+                <stop offset="100%" stop-color="#ffaa00" />
+            </radialGradient>
+
+            <radialGradient id="menstrual-gradient">
+                <stop offset="0%" stop-color="#ff8080" />
+                <stop offset="100%" stop-color="#c44a4a" />
+            </radialGradient>
+            <radialGradient id="follicular-gradient">
+                <stop offset="0%" stop-color="#99e6ff" />
+                <stop offset="100%" stop-color="#4a9aaa" />
+            </radialGradient>
+            <radialGradient id="ovulatory-gradient">
+                <stop offset="0%" stop-color="#fffacd" />
+                <stop offset="100%" stop-color="#ffd700" />
+            </radialGradient>
+            <radialGradient id="luteal-gradient">
+                <stop offset="0%" stop-color="#a3c2ff" />
+                <stop offset="100%" stop-color="#4a8ace" />
+            </radialGradient>
+
+            <radialGradient id="petal-aura-gradient" cx="50%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.4)" />
+                <stop offset="100%" stop-color="rgba(255,215,0,0.1)" />
+            </radialGradient>
+
+            <filter id="petal-texture" x="-20%" y="-20%" width="140%" height="140%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" />
+                <feComposite operator="in" in2="SourceGraphic" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Main App Engine -->
+    <div id="app">
+
+        <!-- Header: The Title Sphere -->
+        <header>
+            <h1 id="app-title">LotusCycle <span class="text-gold-shimmer">Aura</span></h1>
+            <div class="h-[1px] w-32 bg-gradient-to-r from-transparent via-[#ffd700] to-transparent mx-auto mt-2"></div>
+            <p id="phase-subtitle">Harmonizing the Sacred Rhythm</p>
+        </header>
+
+        <!-- Main: The Living Mandala -->
+        <main>
+            <!-- Left Scroll: The Nourisher -->
+            <section id="scroll-nourishment" class="scroll-tab scroll-left" data-scroll="nourishment">
+                <div class="scroll-handle">
+                    <span class="text-2xl mb-2">🍃</span>
+                    <span class="scroll-label writing-vertical">Nourish</span>
+                </div>
+                <div class="scroll-content">
+                    <div class="scroll-inner-content">
+                        <h3>Ayurvedic Wisdom</h3>
+                        <div id="nourishment-content"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Center Dial Area -->
+            <div class="lotus-container">
+                <svg id="lotus-dial" viewBox="0 0 400 400">
+                    <!-- Dynamic segments will be injected here by lotus-dial.js -->
+                    <g id="petals-group"></g>
+
+                    <!-- The Crystal Sun Core -->
+                    <g id="sun-core-group" class="cursor-pointer">
+                        <circle id="sun-center" cx="200" cy="200" r="65" fill="url(#sun-crystal-gradient)"
+                            filter="url(#crystal-refraction)" />
+
+                        <g id="sun-info-standard">
+                            <text x="200" y="185" text-anchor="middle"
+                                class="text-[8px] uppercase tracking-[0.3em] fill-[#4a2a0a] font-semibold opacity-60">DAY</text>
+                            <text id="date-day" x="200" y="210" text-anchor="middle"
+                                class="text-5xl fill-[#4a2a0a] font-bold">01</text>
+                            <text id="date-phase" x="200" y="230" text-anchor="middle"
+                                class="text-[9px] uppercase tracking-[0.2em] fill-[#4a2a0a] font-semibold opacity-70">MENSTRUAL</text>
+                        </g>
+
+                        <g id="sun-info-whisper" class="opacity-0 pointer-events-none transition-opacity duration-300">
+                            <foreignObject x="155" y="155" width="90" height="90">
+                                <div xmlns="http://www.w3.org/1999/xhtml"
+                                    class="w-full h-full flex items-center justify-center text-center">
+                                    <p id="horizon-whisper-text"
+                                        class="text-[11px] font-serif italic text-[#4a2a0a] leading-tight drop-shadow-sm select-none p-2 rounded-full backdrop-blur-[2px] bg-gradient-radial from-white/40 to-transparent">
+                                        Whisper of the river...
+                                    </p>
+                                </div>
+                            </foreignObject>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Right Scroll: The Sadhana -->
+            <section id="scroll-asanas" class="scroll-tab scroll-right" data-scroll="asanas">
+                <div class="scroll-handle">
+                    <span class="text-2xl mb-2">🧘</span>
+                    <span class="scroll-label writing-vertical">Asanas</span>
+                </div>
+                <div class="scroll-content">
+                    <div class="scroll-inner-content">
+                        <h3>Sacred Practice</h3>
+                        <div id="asanas-content"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Navigation: The Sacred Leaves -->
+        <nav id="nav-leaves">
+            <button id="nav-history" class="nav-leaf" aria-label="History">
+                <svg viewBox="0 0 80 100">
+                    <path d="M40 5 Q10 30 10 60 Q10 95 40 95 Q70 95 70 60 Q70 30 40 5" fill="rgba(42, 106, 58, 0.4)"
+                        stroke="#d4af37" stroke-width="0.5" />
+                    <path d="M40 15 L40 85 M40 35 Q20 50 20 60 M40 55 Q60 65 60 75" stroke="#d4af37" stroke-width="0.3"
+                        opacity="0.4" fill="none" />
+                </svg>
+                <span class="nav-label">History</span>
+            </button>
+
+            <button id="nav-log" class="nav-leaf" aria-label="Log Ritual">
+                <div
+                    class="relative w-16 h-16 flex items-center justify-center filter drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]">
+                    <svg viewBox="0 0 64 64" class="w-full h-full overflow-visible">
+                        <circle cx="32" cy="32" r="28" fill="rgba(255,215,0,0.15)" stroke="#ffd700" stroke-width="2"
+                            stroke-dasharray="4 4" />
+                        <path d="M32 16 L32 48 M16 32 L48 32" stroke="#fff" stroke-width="3" stroke-linecap="round"
+                            filter="drop-shadow(0 0 5px #ffd700)" />
+                    </svg>
+                </div>
+                <span class="nav-label">Log Entry</span>
+            </button>
+
+            <button id="nav-rituals" class="nav-leaf" aria-label="Rituals">
+                <svg viewBox="0 0 80 100">
+                    <path d="M40 5 Q10 30 10 60 Q10 95 40 95 Q70 95 70 60 Q70 30 40 5" fill="rgba(26, 74, 90, 0.4)"
+                        stroke="#d4af37" stroke-width="0.5" />
+                    <path d="M40 15 L40 85 M40 35 Q20 50 20 60 M40 55 Q60 65 60 75" stroke="#d4af37" stroke-width="0.3"
+                        opacity="0.4" fill="none" />
+                </svg>
+                <span class="nav-label">Rituals</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- Modals -->
+    <div id="log-modal" class="modal hidden fixed inset-0 z-[200] flex items-center justify-center">
+        <div class="modal-backdrop absolute inset-0 bg-black/60"></div>
+        <div class="modal-content parchment-scroll relative z-10 w-[90vw] max-w-2xl max-h-[85vh] overflow-y-auto">
+            <button id="close-log-modal"
+                class="absolute top-6 right-6 text-3xl opacity-50 hover:opacity-100 transition-opacity modal-close">&times;</button>
+            <h2
+                class="font-display text-4xl text-[#ffd700] mb-8 border-b border-white/10 pb-6 tracking-widest uppercase">
+                Sacred Log</h2>
+            <div id="log-body" class="space-y-6"></div>
+            <button id="save-log"
+                class="w-full mt-10 py-5 text-xl text-[#faf4e4] hover:scale-[1.02] active:scale-95 transition-transform">Record
+                Entry</button>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="history-modal" class="modal hidden fixed inset-0 z-[200] flex items-center justify-center">
+        <div class="modal-backdrop absolute inset-0 bg-black/60"></div>
+        <div class="modal-content parchment-scroll relative z-10 w-[90vw] max-w-2xl max-h-[85vh] overflow-y-auto">
+            <button id="close-history-modal"
+                class="absolute top-6 right-6 text-3xl opacity-50 hover:opacity-100 transition-opacity modal-close">&times;</button>
+            <h2
+                class="font-display text-4xl text-[#ffd700] mb-8 border-b border-white/10 pb-6 tracking-widest uppercase">
+                Sacred History</h2>
+            <div id="history-body" class="space-y-6"></div>
+        </div>
+    </div>
+
+    <!-- Core Engine Scripts -->
+    <script src="https://unpkg.com/zustand@4.4.7/umd/zustand.production.js"></script>
+    <script src="https://unpkg.com/dexie@3.2.4/dist/dexie.js"></script>
+    <script src="data.js"></script>
+    <script src="store.js"></script>
+    <script src="river-engine.js"></script>
+    <script src="lotus-dial.js"></script>
+    <script src="scroll-system.js"></script>
+    <script src="modals.js"></script>
+    <script src="premium-effects.js"></script>
+    <script src="app.js"></script>
+
+</body>
+
+</html>

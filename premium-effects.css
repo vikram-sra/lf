@@ -1,0 +1,155 @@
+/* LotusCycle Aura 2.0 - Premium Interaction & Visual Polish */
+
+/* --- Advanced Animations --- */
+
+@keyframes pulse-sacred {
+
+    0%,
+    100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+
+    50% {
+        transform: scale(1.02);
+        filter: brightness(1.2);
+    }
+}
+
+@keyframes float-ethereal {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0);
+    }
+
+    50% {
+        transform: translateY(-10px) rotate(2deg);
+    }
+}
+
+@keyframes refraction-shift {
+    0% {
+        filter: hue-rotate(0deg) brightness(1);
+    }
+
+    50% {
+        filter: hue-rotate(10deg) brightness(1.1);
+    }
+
+    100% {
+        filter: hue-rotate(0deg) brightness(1);
+    }
+}
+
+/* --- Crystal Sun Effects --- */
+
+#sun-core-group {
+    animation: refraction-shift 8s ease-in-out infinite;
+}
+
+#sun-center {
+    transition: r 0.6s var(--ease-out-expo);
+}
+
+#sun-core-group:hover #sun-center {
+    animation: pulse-sacred 2s ease-in-out infinite;
+}
+
+/* --- Scroll Interaction Polish --- */
+
+.scroll-tab.open .scroll-handle {
+    border-color: var(--gold-shimmer);
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+}
+
+.scroll-inner-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.scroll-inner-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scroll-inner-content::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.3);
+    border-radius: 10px;
+}
+
+/* --- Silk Texture Overlays --- */
+
+.scroll-content::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('https://www.transparenttextures.com/patterns/silk.png');
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+/* --- Navigation Leaf Polish --- */
+
+.nav-leaf:hover svg {
+    transform: scale(1.1) rotate(5deg);
+    filter: drop-shadow(0 10px 20px rgba(255, 215, 0, 0.4));
+}
+
+.nav-leaf:active {
+    transform: scale(0.95);
+}
+
+/* --- Sacred Spark Particles --- */
+
+.sacred-spark {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--gold-shimmer);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    box-shadow: 0 0 10px var(--gold-shimmer);
+}
+
+/* --- Dynamic Overlap Prevention --- */
+
+@media (max-width: 1024px) {
+    .scroll-handle {
+        width: 50px;
+        height: 140px;
+    }
+}
+
+@media (max-height: 700px) {
+    .lotus-container {
+        transform: translateY(-20px);
+    }
+}
+
+/* --- Fade In System --- */
+
+.fade-in-up {
+    animation: fadeInUp 1s var(--ease-out-expo) forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Writing Mode Helpers --- */
+.writing-vertical {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    font-size: 0.7rem;
+    font-weight: 300;
+}
