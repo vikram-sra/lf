@@ -46,10 +46,12 @@
 
 #sun-core-group {
     animation: refraction-shift 8s ease-in-out infinite;
+    will-change: filter;
 }
 
 #sun-center {
     transition: r 0.6s var(--ease-out-expo);
+    will-change: r;
 }
 
 #sun-core-group:hover #sun-center {
@@ -90,12 +92,23 @@
 /* --- Navigation Leaf Polish --- */
 
 .nav-leaf:hover svg {
-    transform: scale(1.1) rotate(5deg);
-    filter: drop-shadow(0 10px 20px rgba(255, 215, 0, 0.4));
+    transform: scale(1.05) rotate(2deg);
+    filter: drop-shadow(0 10px 25px rgba(255, 215, 0, 0.5));
 }
 
-.nav-leaf:active {
-    transform: scale(0.95);
+@keyframes spin-slow {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin-slow {
+    animation: spin-slow 12s linear infinite;
+    transform-origin: center;
 }
 
 /* --- Sacred Spark Particles --- */

@@ -19,6 +19,23 @@
 
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="premium-effects.css">
+    <!-- Tailwind CSS for utility beauty -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Cormorant Garamond', 'serif'],
+                        body: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        gold: '#ffd700',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 
 <body class="bg-river-deep select-none">
@@ -79,8 +96,8 @@
             </radialGradient>
 
             <radialGradient id="petal-aura-gradient" cx="50%" cy="30%" r="70%">
-                <stop offset="0%" stop-color="rgba(255,255,255,0.4)" />
-                <stop offset="100%" stop-color="rgba(255,215,0,0.1)" />
+                <stop offset="0%" stop-color="rgba(255,255,255,0.7)" />
+                <stop offset="100%" stop-color="rgba(255,215,0,0.4)" />
             </radialGradient>
 
             <filter id="petal-texture" x="-20%" y="-20%" width="140%" height="140%">
@@ -121,20 +138,25 @@
             <div class="lotus-container">
                 <svg id="lotus-dial" viewBox="0 0 400 400">
                     <!-- Dynamic segments will be injected here by lotus-dial.js -->
-                    <g id="petals-group"></g>
+                    <g id="outer-petals-group" class="rotate-slow-cw"></g>
+                    <g id="mid-petals-group"></g>
+                    <g id="inner-petals-group"></g>
 
                     <!-- The Crystal Sun Core -->
                     <g id="sun-core-group" class="cursor-pointer">
-                        <circle id="sun-center" cx="200" cy="200" r="65" fill="url(#sun-crystal-gradient)"
+                        <circle id="sun-center" cx="200" cy="200" r="75" fill="url(#sun-crystal-gradient)"
                             filter="url(#crystal-refraction)" />
 
                         <g id="sun-info-standard">
-                            <text x="200" y="185" text-anchor="middle"
-                                class="text-[8px] uppercase tracking-[0.3em] fill-[#4a2a0a] font-semibold opacity-60">DAY</text>
-                            <text id="date-day" x="200" y="210" text-anchor="middle"
-                                class="text-5xl fill-[#4a2a0a] font-bold">01</text>
-                            <text id="date-phase" x="200" y="230" text-anchor="middle"
-                                class="text-[9px] uppercase tracking-[0.2em] fill-[#4a2a0a] font-semibold opacity-70">MENSTRUAL</text>
+                            <text x="200" y="160" text-anchor="middle"
+                                class="text-[8px] uppercase tracking-[0.4em] fill-white opacity-40 font-bold">
+                                <tspan x="200" dy="0">Cycle</tspan>
+                                <tspan x="200" dy="10">Day</tspan>
+                            </text>
+                            <text id="date-day" x="200" y="222" text-anchor="middle"
+                                class="text-7xl fill-[#ffd700] font-bold drop-shadow-[0_0_15px_rgba(255,215,0,0.4)]">01</text>
+                            <text id="date-phase" x="200" y="252" text-anchor="middle"
+                                class="text-[11px] uppercase tracking-[0.25em] fill-white/80 font-semibold">MENSTRUAL</text>
                         </g>
 
                         <g id="sun-info-whisper" class="opacity-0 pointer-events-none transition-opacity duration-300">
@@ -171,22 +193,40 @@
         <nav id="nav-leaves">
             <button id="nav-history" class="nav-leaf" aria-label="History">
                 <svg viewBox="0 0 80 100">
+                    <!-- Leaf Body -->
                     <path d="M40 5 Q10 30 10 60 Q10 95 40 95 Q70 95 70 60 Q70 30 40 5" fill="rgba(42, 106, 58, 0.4)"
                         stroke="#d4af37" stroke-width="0.5" />
-                    <path d="M40 15 L40 85 M40 35 Q20 50 20 60 M40 55 Q60 65 60 75" stroke="#d4af37" stroke-width="0.3"
-                        opacity="0.4" fill="none" />
+                    <!-- Natural Veins -->
+                    <path d="M40 90 L40 15 
+                             M40 80 Q25 75 15 60
+                             M40 80 Q55 75 65 60
+                             M40 55 Q20 50 15 35
+                             M40 55 Q60 50 65 35
+                             M40 35 Q25 28 20 20" stroke="#d4af37" stroke-width="0.3" opacity="0.3" fill="none" />
                 </svg>
                 <span class="nav-label">History</span>
             </button>
 
             <button id="nav-log" class="nav-leaf" aria-label="Log Ritual">
                 <div
-                    class="relative w-16 h-16 flex items-center justify-center filter drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]">
+                    class="relative w-16 h-16 flex items-center justify-center filter drop-shadow-[0_0_15px_rgba(255,215,0,0.6)]">
                     <svg viewBox="0 0 64 64" class="w-full h-full overflow-visible">
-                        <circle cx="32" cy="32" r="28" fill="rgba(255,215,0,0.15)" stroke="#ffd700" stroke-width="2"
-                            stroke-dasharray="4 4" />
-                        <path d="M32 16 L32 48 M16 32 L48 32" stroke="#fff" stroke-width="3" stroke-linecap="round"
-                            filter="drop-shadow(0 0 5px #ffd700)" />
+                        <!-- Outer Glow Circle -->
+                        <circle cx="32" cy="32" r="28" fill="rgba(255,215,0,0.1)" stroke="#ffd700" stroke-width="1.5"
+                            stroke-dasharray="2 6" class="animate-spin-slow" />
+
+                        <!-- Sacred Lotus Icon -->
+                        <g fill="#ffd700" filter="drop-shadow(0 0 5px #ffd700)">
+                            <!-- Center Petal -->
+                            <path d="M32 48 C36 40 42 30 32 12 C22 30 28 40 32 48" />
+                            <!-- Left Petal -->
+                            <path d="M32 48 C20 45 10 38 12 28 C15 18 25 28 32 48" opacity="0.8" />
+                            <!-- Right Petal -->
+                            <path d="M32 48 C44 45 54 38 52 28 C49 18 39 28 32 48" opacity="0.8" />
+                            <!-- Lower Petals -->
+                            <path d="M32 48 C18 50 12 45 15 38 C18 32 25 40 32 48" opacity="0.6" />
+                            <path d="M32 48 C46 50 52 45 49 38 C46 32 39 40 32 48" opacity="0.6" />
+                        </g>
                     </svg>
                 </div>
                 <span class="nav-label">Log Entry</span>
@@ -194,10 +234,16 @@
 
             <button id="nav-rituals" class="nav-leaf" aria-label="Rituals">
                 <svg viewBox="0 0 80 100">
+                    <!-- Leaf Body -->
                     <path d="M40 5 Q10 30 10 60 Q10 95 40 95 Q70 95 70 60 Q70 30 40 5" fill="rgba(26, 74, 90, 0.4)"
                         stroke="#d4af37" stroke-width="0.5" />
-                    <path d="M40 15 L40 85 M40 35 Q20 50 20 60 M40 55 Q60 65 60 75" stroke="#d4af37" stroke-width="0.3"
-                        opacity="0.4" fill="none" />
+                    <!-- Natural Veins -->
+                    <path d="M40 90 L40 15 
+                             M40 80 Q25 75 15 60
+                             M40 80 Q55 75 65 60
+                             M40 55 Q20 50 15 35
+                             M40 55 Q60 50 65 35
+                             M40 35 Q25 28 20 20" stroke="#d4af37" stroke-width="0.3" opacity="0.3" fill="none" />
                 </svg>
                 <span class="nav-label">Rituals</span>
             </button>
@@ -209,8 +255,7 @@
     <div id="log-modal" class="modal hidden fixed inset-0 z-[200] flex items-center justify-center">
         <div class="modal-backdrop absolute inset-0 bg-black/60"></div>
         <div class="modal-content parchment-scroll relative z-10 w-[90vw] max-w-2xl max-h-[85vh] overflow-y-auto">
-            <button id="close-log-modal"
-                class="absolute top-6 right-6 text-3xl opacity-50 hover:opacity-100 transition-opacity modal-close">&times;</button>
+            <button id="close-log-modal" class="modal-close"></button>
             <h2
                 class="font-display text-4xl text-[#ffd700] mb-8 border-b border-white/10 pb-6 tracking-widest uppercase">
                 Sacred Log</h2>
@@ -225,8 +270,7 @@
     <div id="history-modal" class="modal hidden fixed inset-0 z-[200] flex items-center justify-center">
         <div class="modal-backdrop absolute inset-0 bg-black/60"></div>
         <div class="modal-content parchment-scroll relative z-10 w-[90vw] max-w-2xl max-h-[85vh] overflow-y-auto">
-            <button id="close-history-modal"
-                class="absolute top-6 right-6 text-3xl opacity-50 hover:opacity-100 transition-opacity modal-close">&times;</button>
+            <button id="close-history-modal" class="modal-close"></button>
             <h2
                 class="font-display text-4xl text-[#ffd700] mb-8 border-b border-white/10 pb-6 tracking-widest uppercase">
                 Sacred History</h2>
@@ -238,8 +282,7 @@
     <div id="scroll-rituals" class="modal hidden fixed inset-0 z-[200] flex items-center justify-center">
         <div class="modal-backdrop absolute inset-0 bg-black/60"></div>
         <div class="modal-content parchment-scroll relative z-10 w-[90vw] max-w-2xl max-h-[85vh] overflow-y-auto">
-            <button id="close-rituals-modal"
-                class="absolute top-6 right-6 text-3xl opacity-50 hover:opacity-100 transition-opacity modal-close">&times;</button>
+            <button id="close-rituals-modal" class="modal-close"></button>
             <h2
                 class="font-display text-4xl text-[#ffd700] mb-8 border-b border-white/10 pb-6 tracking-widest uppercase">
                 Sacred Rituals</h2>

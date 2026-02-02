@@ -19,7 +19,7 @@ class PremiumEffects {
      * Add ripple effect to all interactive buttons
      */
     addRippleEffects() {
-        const buttons = document.querySelectorAll('button, .scroll-handle, .nav-leaf, .petal');
+        const buttons = document.querySelectorAll('.petal'); // Removed nav-leaf and general buttons
 
         buttons.forEach(button => {
             button.addEventListener('click', (e) => {

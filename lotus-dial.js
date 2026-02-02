@@ -6,7 +6,9 @@
 class LotusDial {
     constructor(svgId) {
         this.svg = document.getElementById(svgId);
-        this.petalsGroup = document.getElementById('petals-group');
+        this.outerPetalsGroup = document.getElementById('outer-petals-group');
+        this.midPetalsGroup = document.getElementById('mid-petals-group');
+        this.innerPetalsGroup = document.getElementById('inner-petals-group');
         this.sunCore = document.getElementById('sun-center');
         this.dateDayText = document.getElementById('date-day');
         this.datePhaseText = document.getElementById('date-phase');
@@ -57,8 +59,11 @@ class LotusDial {
     }
 
     renderPetals() {
-        this.petalsGroup.innerHTML = '';
+        this.outerPetalsGroup.innerHTML = '';
+        this.midPetalsGroup.innerHTML = '';
+        this.innerPetalsGroup.innerHTML = '';
         this.renderOuterRing();
+        this.renderMidRing();
         this.renderCycleRing();
     }
 
@@ -68,16 +73,39 @@ class LotusDial {
 
         for (let i = 0; i < count; i++) {
             const angle = i * angleStep;
-            const pathData = this.createPetalShape(angle, 100, 60, 70);
+            // Radius 110-195 (Large Background Petals)
+            const pathData = this.createPetalShape(angle, 110, 70, 85);
 
             const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
             p.setAttribute('d', pathData);
             p.setAttribute('fill', 'url(#petal-aura-gradient)');
-            p.setAttribute('stroke', 'rgba(255, 215, 0, 0.4)'); /* Brightened from 0.15 */
-            p.setAttribute('stroke-width', '0.8');
+            p.setAttribute('stroke', 'rgba(255, 215, 0, 0.3)');
+            p.setAttribute('stroke-width', '0.6');
             p.classList.add('petal-outer');
 
-            this.petalsGroup.appendChild(p);
+            this.outerPetalsGroup.appendChild(p);
+        }
+    }
+
+    renderMidRing() {
+        const count = 12;
+        const angleStep = 360 / count;
+        const offset = angleStep / 2; // Interleave between outer petals
+
+        for (let i = 0; i < count; i++) {
+            const angle = i * angleStep + offset;
+            // Radius 105-165 (Smaller interspatial petals)
+            const pathData = this.createPetalShape(angle, 105, 40, 60);
+
+            const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            p.setAttribute('d', pathData);
+            p.setAttribute('fill', 'url(#petal-aura-gradient)');
+            p.setAttribute('stroke', 'rgba(255, 215, 0, 0.2)');
+            p.setAttribute('stroke-width', '0.4');
+            p.style.opacity = '0.6';
+            p.classList.add('petal-mid');
+
+            this.midPetalsGroup.appendChild(p);
         }
     }
 
@@ -85,9 +113,9 @@ class LotusDial {
         const state = window.cycleStore.getState();
         const activePhaseName = state.getCurrentPhase();
         const angleStep = 360 / this.cycleLength;
-        const innerRadius = 82;
-        const petalHeight = 48;
-        const overlapWidth = (360 / this.cycleLength) * 1.1;
+        const innerRadius = 92; // Was 82
+        const petalHeight = 55; // Was 48
+        const overlapWidth = (360 / this.cycleLength) * 1.2;
 
         for (let i = 0; i < this.cycleLength; i++) {
             const day = i + 1;
@@ -108,10 +136,10 @@ class LotusDial {
 
             // Dynamic Coloring based on phase
             path.setAttribute('fill', phaseData.color);
-            path.setAttribute('fill-opacity', phase === activePhaseName ? '0.25' : '0.05');
+            path.setAttribute('fill-opacity', phase === activePhaseName ? '0.5' : '0.2');
             path.setAttribute('stroke', phaseData.color);
-            path.setAttribute('stroke-opacity', '0.4');
-            path.setAttribute('stroke-width', '0.5');
+            path.setAttribute('stroke-opacity', '0.6');
+            path.setAttribute('stroke-width', '0.6');
             path.classList.add('petal-path', 'transition-all', 'duration-500');
 
             // Day Number
@@ -132,7 +160,7 @@ class LotusDial {
             g.appendChild(text);
 
             g.addEventListener('click', () => this.selectDay(day));
-            this.petalsGroup.appendChild(g);
+            this.innerPetalsGroup.appendChild(g);
         }
 
         this.highlightActiveDay();
@@ -167,26 +195,31 @@ class LotusDial {
     }
 
     animateBloom() {
-        const outers = document.querySelectorAll('.petal-outer');
-        outers.forEach((p, i) => {
-            p.style.opacity = '0';
-            p.style.transform = 'scale(0.8) rotate(-10deg)';
-            setTimeout(() => {
-                p.style.transition = 'all 1.5s var(--ease-out-expo)';
+        // Use a single class to trigger animations for better performance
+        requestAnimationFrame(() => {
+            const outers = document.querySelectorAll('.petal-outer');
+            outers.forEach((p, i) => {
+                p.style.transition = 'all 0.8s var(--ease-out-expo)';
+                p.style.transitionDelay = `${i * 50}ms`;
                 p.style.opacity = '1';
                 p.style.transform = 'scale(1) rotate(0deg)';
-            }, i * 100);
-        });
+            });
 
-        const petals = document.querySelectorAll('.petal-container');
-        petals.forEach((p, i) => {
-            p.style.opacity = '0';
-            p.style.transform = 'scale(0.9)';
-            setTimeout(() => {
-                p.style.transition = 'all 1s var(--ease-out-expo)';
+            const petals = document.querySelectorAll('.petal-container');
+            petals.forEach((p, i) => {
+                p.style.transition = 'all 0.6s var(--ease-out-expo)';
+                p.style.transitionDelay = `${200 + i * 15}ms`;
                 p.style.opacity = '1';
                 p.style.transform = 'scale(1)';
-            }, 500 + i * 20);
+            });
+
+            const mids = document.querySelectorAll('.petal-mid');
+            mids.forEach((p, i) => {
+                p.style.transition = 'all 0.6s var(--ease-out-expo)';
+                p.style.transitionDelay = `${100 + i * 30}ms`;
+                p.style.opacity = '0.6';
+                p.style.transform = 'scale(1)';
+            });
         });
     }
 
@@ -221,30 +254,30 @@ class LotusDial {
             if (day === this.currentDay) {
                 // ACTIVE DAY: Radiant presence
                 path.style.fill = phaseData.color;
-                path.style.fillOpacity = '0.9';
+                path.style.fillOpacity = '0.95';
                 path.style.stroke = '#fff';
-                path.style.strokeWidth = '2px';
-                path.style.filter = `drop-shadow(0 0 15px ${phaseData.color})`;
+                path.style.strokeWidth = '2.5px';
+                path.style.filter = `drop-shadow(0 0 20px ${phaseData.color})`;
                 if (text) text.style.fillOpacity = '1';
                 g.style.transform = 'scale(1.15)';
             } else if (phase === activePhase) {
-                // ACTIVE PHASE: Subtle glow
+                // ACTIVE PHASE: Solid glow
                 path.style.fill = phaseData.color;
-                path.style.fillOpacity = '0.25';
+                path.style.fillOpacity = '0.5';
                 path.style.stroke = phaseData.color;
-                path.style.strokeWidth = '1px';
+                path.style.strokeWidth = '1.2px';
                 path.style.filter = 'none';
-                if (text) text.style.fillOpacity = '0.8';
+                if (text) text.style.fillOpacity = '0.9';
                 g.style.transform = 'scale(1.02)';
             } else {
-                // INACTIVE PHASES: Ghostly wireframe
+                // INACTIVE PHASES: Solid presence
                 path.style.fill = phaseData.color;
-                path.style.fillOpacity = '0.05';
+                path.style.fillOpacity = '0.2';
                 path.style.stroke = phaseData.color;
-                path.style.strokeOpacity = '0.3';
-                path.style.strokeWidth = '0.5px';
+                path.style.strokeOpacity = '0.5';
+                path.style.strokeWidth = '0.8px';
                 path.style.filter = 'none';
-                if (text) text.style.fillOpacity = '0.4';
+                if (text) text.style.fillOpacity = '0.6';
                 g.style.transform = 'scale(1)';
             }
         });

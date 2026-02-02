@@ -15,51 +15,19 @@ class ParchmentScrolls {
             handle?.addEventListener('click', () => this.toggleScroll(tab));
         });
 
-        // Close on outside click
+        // Close on outside click (ignore if clicking on modals or nav)
         document.addEventListener('click', (e) => {
-            if (!e.target.closest('.scroll-tab')) {
+            const isTab = e.target.closest('.scroll-tab');
+            const isModal = e.target.closest('.modal');
+            const isNav = e.target.closest('nav');
+
+            if (!isTab && !isModal && !isNav) {
                 this.closeAll();
             }
         });
 
         // Update content on day change
         window.addEventListener('dial:dayChanged', (e) => this.updateContent(e.detail.day));
-
-        // Rituals close button
-        const closeRituals = document.querySelector('.close-rituals');
-        closeRituals?.addEventListener('click', () => {
-            const rituals = document.getElementById('scroll-rituals');
-            this.closeScrollWithAnimation(rituals);
-        });
-
-        // Listen for Rituals button click
-        document.getElementById('nav-rituals')?.addEventListener('click', () => {
-            console.log('🌿 Rituals button clicked');
-            this.openRituals();
-        });
-    }
-
-    openRituals() {
-        const ritualsScroll = document.getElementById('scroll-rituals');
-        if (!ritualsScroll) return;
-
-        // Close others through modalController if it exists
-        if (window.modalController) {
-            window.modalController.closeAll();
-        } else {
-            this.closeAll();
-        }
-
-        ritualsScroll.classList.remove('hidden');
-
-        // Center-out reveal with bounce
-        requestAnimationFrame(() => {
-            ritualsScroll.classList.add('open');
-            this.addBounceAnimation(ritualsScroll);
-        });
-
-        document.body.classList.add('scroll-mode-active');
-        this.loadScrollContent('rituals');
     }
 
     toggleScroll(tab) {
@@ -142,8 +110,6 @@ class ParchmentScrolls {
             this.renderNourishment(container, data.nourishment);
         } else if (type === 'asanas') {
             this.renderAsanas(container, data.asanas);
-        } else if (type === 'rituals') {
-            this.renderRituals(container, data.rituals);
         }
 
         // Add entrance animations to content
@@ -161,23 +127,6 @@ class ParchmentScrolls {
                 child.style.transform = 'translateY(0)';
             }, i * 50 + 200);
         });
-    }
-
-    renderRituals(el, rituals) {
-        if (!rituals) return;
-        el.innerHTML = `
-            <div class="animate-fade-in silk-texture">
-                <p class="italic mb-8 text-[#faf4e4] opacity-80 text-center text-lg tracking-wide" style="font-weight: 300;">Sacred practices to align your spirit.</p>
-                <div class="space-y-8">
-                    ${rituals.map(r => `
-                        <div class="p-6 bg-white/5 border border-white/10 rounded-3xl shadow-xl transition-all hover:bg-white/10">
-                            <h4 class="font-display text-2xl text-[#ffd700] mb-3 tracking-[0.15em] font-light">${r.name}</h4>
-                            <p class="text-base leading-relaxed text-[#faf4e4]/90 tracking-wide" style="line-height: 1.8;">${r.desc}</p>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
     }
 
     renderNourishment(el, info) {
@@ -231,5 +180,3 @@ class ParchmentScrolls {
         }
     }
 }
-
-

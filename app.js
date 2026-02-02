@@ -146,156 +146,38 @@ class LotusCycleApp {
     setupNavigation() {
         console.log('🔗 Setting up navigation listeners...');
 
-        // Wait a tick to ensure DOM is fully ready
         setTimeout(() => {
-            // Verify buttons exist
             const historyBtn = document.getElementById('nav-history');
             const logBtn = document.getElementById('nav-log');
             const ritualsBtn = document.getElementById('nav-rituals');
-
-            console.log('Button check:', {
-                history: !!historyBtn,
-                log: !!logBtn,
-                rituals: !!ritualsBtn
-            });
 
             if (!historyBtn || !logBtn || !ritualsBtn) {
                 console.error('❌ One or more buttons not found in DOM');
                 return;
             }
 
-            // History Button
-            historyBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('📜 History clicked!');
-                console.log('modalController exists:', !!window.modalController);
-
-                if (window.modalController) {
-                    console.log('Calling modalController.open("history")');
+            if (window.modalController) {
+                historyBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     window.modalController.open('history');
-                } else {
-                    console.warn('ModalController not ready, using fallback');
-                }
+                });
 
-                // FORCE fallback to ensure it opens
-                const modal = document.getElementById('history-modal');
-                console.log('history-modal element:', modal);
-                if (modal) {
-                    console.log('Forcing history-modal to be visible with inline styles');
-                    modal.classList.remove('hidden');
-                    // Force EVERYTHING to make it visible
-                    modal.style.display = 'flex';
-                    modal.style.position = 'fixed';
-                    modal.style.top = '0px';
-                    modal.style.left = '0px';
-                    modal.style.width = '100vw';
-                    modal.style.height = '100vh';
-                    modal.style.opacity = '1';
-                    modal.style.visibility = 'visible';
-                    modal.style.zIndex = '99999';
-                    modal.style.backgroundColor = 'rgba(5, 17, 26, 0.95)'; // Match app background
-
-                    // Force render content
-                    if (window.modalController) {
-                        console.log('Manually calling renderHistoryContent');
-                        window.modalController.renderHistoryContent();
-                    }
-                }
-            }, { capture: true });
-
-            // Log Button
-            logBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('📝 Log clicked!');
-                console.log('modalController exists:', !!window.modalController);
-
-                if (window.modalController) {
-                    console.log('Calling modalController.open("log")');
+                logBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     window.modalController.open('log');
-                } else {
-                    console.warn('ModalController not ready, using fallback');
-                }
+                });
 
-                // FORCE fallback to ensure it opens
-                const modal = document.getElementById('log-modal');
-                console.log('log-modal element:', modal);
-                if (modal) {
-                    console.log('Forcing log-modal to be visible with inline styles');
-                    modal.classList.remove('hidden');
-                    // Force EVERYTHING to make it visible
-                    modal.style.display = 'flex';
-                    modal.style.position = 'fixed';
-                    modal.style.top = '0px';
-                    modal.style.left = '0px';
-                    modal.style.width = '100vw';
-                    modal.style.height = '100vh';
-                    modal.style.opacity = '1';
-                    modal.style.visibility = 'visible';
-                    modal.style.zIndex = '99999';
-                    modal.style.backgroundColor = 'rgba(5, 17, 26, 0.95)'; // Match app background
+                ritualsBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.modalController.open('rituals');
+                });
 
-                    // Force render content
-                    if (window.modalController) {
-                        console.log('Manually calling renderLogContent');
-                        window.modalController.renderLogContent();
-                    }
-                }
-            }, { capture: true });
-
-            // Rituals Button
-            ritualsBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('🌿 Rituals clicked!');
-
-                // FORCE modal to open
-                const modal = document.getElementById('scroll-rituals');
-                console.log('scroll-rituals element:', modal);
-                if (modal) {
-                    console.log('Forcing scroll-rituals to be visible');
-                    modal.classList.remove('hidden');
-                    // Force EVERYTHING to make it visible
-                    modal.style.display = 'flex';
-                    modal.style.position = 'fixed';
-                    modal.style.top = '0px';
-                    modal.style.left = '0px';
-                    modal.style.width = '100vw';
-                    modal.style.height = '100vh';
-                    modal.style.opacity = '1';
-                    modal.style.visibility = 'visible';
-                    modal.style.zIndex = '99999';
-                    modal.style.backgroundColor = 'rgba(5, 17, 26, 0.95)';
-
-                    // Render rituals content
-                    const state = window.cycleStore.getState();
-                    const day = state.getCycleDay();
-                    const phase = getPhaseFromDay(day, state.settings.cycleLength);
-                    const phaseData = getPhaseData(phase);
-                    const content = document.getElementById('rituals-content');
-
-                    if (content && phaseData.rituals) {
-                        content.innerHTML = `
-                            <div class="animate-fade-in silk-texture">
-                                <p class="italic mb-8 text-[#faf4e4] opacity-80 text-center text-lg tracking-wide" style="font-weight: 300; line-height: 1.8;">Sacred practices to align your spirit with the ${phaseData.name}. Embrace these rituals to harmonize with your natural rhythm.</p>
-                                <div class="space-y-8">
-                                    ${phaseData.rituals.map(r => `
-                                        <div class="p-6 bg-white/5 border border-white/10 rounded-3xl shadow-xl transition-all hover:bg-white/10">
-                                            <h4 class="font-display text-2xl text-[#ffd700] mb-3 tracking-[0.15em] font-light">${r.name}</h4>
-                                            <p class="text-base leading-relaxed text-[#faf4e4]/90 tracking-wide" style="line-height: 1.8;">${r.desc}</p>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        `;
-                    }
-                }
-            }, { capture: true });
-
-            console.log('✅ All navigation listeners bound successfully');
-
-        }, 100);
+                console.log('✅ All navigation listeners bound successfully');
+            }
+        }, 300); // 300ms delay to ensure everything is mounted
     }
 
     createBurst(el) {
