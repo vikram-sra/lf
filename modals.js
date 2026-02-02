@@ -214,37 +214,37 @@ class ModalController {
             const monthDay = realDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
             days.push(`
-                <div class="relative flex flex-col items-center justify-center p-3 rounded-xl transition-all ${isToday ? 'ring-2 ring-[#ffd700] shadow-lg shadow-[#ffd700]/30 scale-105' : 'hover:scale-105'}"
-                     style="background: linear-gradient(135deg, ${phaseData.color}${isFuture ? '30' : '70'}, ${phaseData.color}${isFuture ? '50' : 'A0'});">
-                    <div class="text-xs font-bold text-white/90 mb-0.5">Day ${day}</div>
-                    <div class="text-[9px] text-white/60 font-medium">${monthDay}</div>
-                    ${isToday ? '<div class="absolute -top-1.5 -right-1.5 w-3 h-3 bg-[#ffd700] rounded-full animate-pulse shadow-lg shadow-[#ffd700]/50"></div>' : ''}
+                <div class="relative flex flex-col items-center justify-center p-2.5 rounded-lg transition-all cursor-pointer ${isToday ? 'ring-2 ring-[#ffd700] shadow-lg shadow-[#ffd700]/40 scale-110 z-10' : 'hover:scale-105'}"
+                     style="background: linear-gradient(135deg, ${phaseData.color}${isFuture ? '40' : '85'}, ${phaseData.color}${isFuture ? '60' : 'B0'}); min-height: 55px;">
+                    <div class="text-sm font-bold text-white mb-0.5">D${day}</div>
+                    <div class="text-[10px] text-white/70 font-medium">${monthDay}</div>
+                    ${isToday ? '<div class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#ffd700] rounded-full animate-pulse shadow-md"></div>' : ''}
                 </div>
             `);
         }
 
         return `
-            <div class="mb-8">
-                <h3 class="font-display text-2xl text-[#ffd700] mb-6 tracking-widest uppercase text-center">Cycle Calendar</h3>
-                <div class="grid grid-cols-7 gap-2 mb-6">
+            <div class="mb-10 p-6 bg-white/5 rounded-3xl border border-white/10">
+                <h3 class="font-display text-2xl text-[#ffd700] mb-6 tracking-[0.15em] uppercase text-center font-light">Cycle Calendar</h3>
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;" class="mb-6">
                     ${days.join('')}
                 </div>
-                <div class="flex flex-wrap justify-center gap-4 text-xs mt-6 pb-6 border-b border-white/10">
+                <div class="flex flex-wrap justify-center gap-6 text-xs pt-4 border-t border-white/10">
                     <div class="flex items-center gap-2">
-                        <div class="w-5 h-5 rounded-lg shadow-md" style="background: linear-gradient(135deg, #7A1E2D, #A02838);"></div>
-                        <span class="text-white/80 font-medium">Menstrual</span>
+                        <div class="w-4 h-4 rounded" style="background: linear-gradient(135deg, #7A1E2D, #A02838);"></div>
+                        <span class="text-white/80">Menstrual</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <div class="w-5 h-5 rounded-lg shadow-md" style="background: linear-gradient(135deg, #7FB3A6, #9CC5BB);"></div>
-                        <span class="text-white/80 font-medium">Follicular</span>
+                        <div class="w-4 h-4 rounded" style="background: linear-gradient(135deg, #7FB3A6, #9CC5BB);"></div>
+                        <span class="text-white/80">Follicular</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <div class="w-5 h-5 rounded-lg shadow-md" style="background: linear-gradient(135deg, #F2C94C, #F7D76E);"></div>
-                        <span class="text-white/80 font-medium">Ovulatory</span>
+                        <div class="w-4 h-4 rounded" style="background: linear-gradient(135deg, #F2C94C, #F7D76E);"></div>
+                        <span class="text-white/80">Ovulatory</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <div class="w-5 h-5 rounded-lg shadow-md" style="background: linear-gradient(135deg, #6B5B95, #8B7BA8);"></div>
-                        <span class="text-white/80 font-medium">Luteal</span>
+                        <div class="w-4 h-4 rounded" style="background: linear-gradient(135deg, #6B5B95, #8B7BA8);"></div>
+                        <span class="text-white/80">Luteal</span>
                     </div>
                 </div>
             </div>
