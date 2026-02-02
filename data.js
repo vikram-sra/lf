@@ -236,16 +236,7 @@ const MONTHS = [
 ];
 
 // Mood choices
-const MOOD_OPTIONS = [
-    { emoji: '😊', label: 'Happy' },
-    { emoji: '😌', label: 'Calm' },
-    { emoji: '😐', label: 'Neutral' },
-    { emoji: '😔', label: 'Sad' },
-    { emoji: '😤', label: 'Irritated' },
-    { emoji: '😰', label: 'Anxious' },
-    { emoji: '🥰', label: 'Loving' },
-    { emoji: '😴', label: 'Tired' }
-];
+// NOTE: MOOD_OPTIONS is defined in modals.js to avoid duplication
 
 // Get phase from cycle day
 function getPhaseFromDay(day, cycleLength = 28) {

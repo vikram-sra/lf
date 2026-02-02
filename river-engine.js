@@ -334,8 +334,9 @@ class RiverEngine {
                 const ringRadius = r.r + ring * 15;
                 this.ctx.arc(r.x, r.y, ringRadius, 0, Math.PI * 2);
 
+                const innerRadius = Math.max(0, ringRadius - 3); // Prevent negative radius
                 const gradient = this.ctx.createRadialGradient(
-                    r.x, r.y, ringRadius - 3,
+                    r.x, r.y, innerRadius,
                     r.x, r.y, ringRadius + 3
                 );
                 gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');

@@ -138,7 +138,7 @@ class LotusCycleApp {
             if (!state.initialized) {
                 // In a full implementation, this triggers the onboarding modal
                 // For this hyper-real polish, we ensure defaults are set
-                window.cycleStore.setInitialized(true);
+                state.setInitialized(true);
             }
         }
     }
