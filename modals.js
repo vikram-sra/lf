@@ -130,17 +130,18 @@ class ModalController {
     async saveCurrentLog() {
         const notes = document.getElementById('log-notes').value;
         const date = new Date().toISOString().split('T')[0];
+        const state = window.cycleStore.getState();
 
-        await window.cycleStore.addLog({
+        await state.addLog({
             date,
             flow: this.tempFlow || 1,
             mood: this.tempMood || 'Neutral',
             notes,
-            day: window.cycleStore.getState().getCycleDay()
+            day: state.getCycleDay()
         });
 
         this.closeAll();
-        this.showToast("Ritual Recorded");
+        this.showToast("Ritual Recorded ✨");
 
         // Reset temp values
         this.tempFlow = null;
