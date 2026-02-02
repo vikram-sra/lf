@@ -182,8 +182,13 @@ class LotusCycleApp {
                 const modal = document.getElementById('history-modal');
                 console.log('history-modal element:', modal);
                 if (modal) {
-                    console.log('Removing hidden class from history-modal');
+                    console.log('Forcing history-modal to be visible with inline styles');
                     modal.classList.remove('hidden');
+                    // Force visibility with inline styles
+                    modal.style.display = 'flex';
+                    modal.style.opacity = '1';
+                    modal.style.visibility = 'visible';
+                    modal.style.zIndex = '9999';
                 }
             }, { capture: true });
 
@@ -205,8 +210,13 @@ class LotusCycleApp {
                 const modal = document.getElementById('log-modal');
                 console.log('log-modal element:', modal);
                 if (modal) {
-                    console.log('Removing hidden class from log-modal');
+                    console.log('Forcing log-modal to be visible with inline styles');
                     modal.classList.remove('hidden');
+                    // Force visibility with inline styles
+                    modal.style.display = 'flex';
+                    modal.style.opacity = '1';
+                    modal.style.visibility = 'visible';
+                    modal.style.zIndex = '9999';
                 }
             }, { capture: true });
 
