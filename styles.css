@@ -22,6 +22,10 @@
     /* Transitions */
     --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
     --ease-in-out-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Responsive Constraints */
+    --dial-max-height: 30vh;
+    /* Shrunk again to guarantee separation */
 }
 
 /* Luxury Animations */
@@ -103,9 +107,10 @@ header {
     height: var(--header-height);
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-end;
+    /* Shifting content slightly lower within header */
     align-items: center;
-    padding: 0 1rem;
+    padding: 0 1rem 1rem 1rem;
     text-align: center;
     pointer-events: none;
 }
@@ -132,29 +137,45 @@ header h1 {
 main {
     flex: 1;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-evenly;
+    /* Proportional distribution */
     align-items: center;
     position: relative;
     width: 100%;
     overflow: hidden;
+    padding: 1vh 1rem;
+    gap: 1.5vh;
+}
+
+@media (min-width: 501px) {
+    main {
+        max-height: 70vh;
+        /* Shorter display since title is gone */
+        margin: auto 0;
+    }
 }
 
 .lotus-container {
-    width: var(--dial-size);
-    height: var(--dial-size);
+    width: 100%;
+    max-width: var(--dial-size);
+    max-height: var(--dial-max-height);
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     transition: transform 0.8s var(--ease-out-expo);
+    pointer-events: none;
+    /* Let clicks pass through core to children */
 }
 
 #lotus-dial {
-    width: 100%;
+    width: auto;
     height: 100%;
+    max-height: var(--dial-max-height);
+    aspect-ratio: 1 / 1;
     filter: drop-shadow(0 0 50px rgba(0, 0, 0, 0.5));
     pointer-events: auto;
-    /* Ensure interactions work */
 }
 
 /* 3. Navigation (Dynamic) */
@@ -166,7 +187,9 @@ nav#nav-leaves {
     gap: clamp(1rem, 10vw, 8rem);
     padding-bottom: 2rem;
     position: relative;
-    z-index: 1000;
+    /* Added for z-index */
+    z-index: 5000;
+    /* Increased to be above almost everything */
     pointer-events: none;
     /* Container passes clicks through */
 }
@@ -200,10 +223,97 @@ nav#nav-leaves {
     font-style: italic;
     font-size: clamp(0.8rem, 2vw, 1.1rem);
     letter-spacing: 0.15em;
-    letter-spacing: 0.15em;
     opacity: 1;
     color: var(--gold-shimmer);
     text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+/* --- Center Action Buttons --- */
+.center-action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    position: relative;
+    /* CRITICAL: z-index only works with position */
+    z-index: 9999;
+    /* Force to be above dial and other elements */
+    pointer-events: auto;
+    transition: all 0.5s var(--ease-out-expo);
+    max-width: 98%;
+    /* Maximum allowable width */
+    margin: 0.5vh auto;
+    /* Adjusted margin */
+}
+
+/* Hide buttons when a scroll is open */
+body.scroll-mode-active .center-action-buttons {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px);
+}
+
+.fast-action-btn {
+    width: 100%;
+    padding: 0.35rem 0.8rem;
+    /* Extremely compact vertical space */
+    background: rgba(10, 20, 30, 0.6);
+    /* Slightly darker for better visibility */
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 215, 0, 0.25);
+    /* More visible border */
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    /* Align to left for better icon/text flow */
+    gap: 1.2rem;
+    cursor: pointer;
+    transition: all 0.6s var(--ease-out-expo);
+    position: relative;
+    overflow: hidden;
+}
+
+.fast-action-btn:hover {
+    background: rgba(255, 215, 0, 0.1);
+    transform: translateY(-3px) scale(1.02);
+    border-color: var(--gold-accent);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.fast-action-btn .btn-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.72rem;
+    /* Even smaller text */
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--gold-bright);
+    font-weight: 400;
+}
+
+.fast-action-btn .btn-icon {
+    font-size: 0.85rem;
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.4));
+}
+
+.fast-action-btn .btn-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, var(--gold-accent) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.fast-action-btn:hover .btn-glow {
+    opacity: 0.1;
+}
+
+.fast-action-btn.nourish {
+    border-color: rgba(127, 179, 166, 0.4);
+}
+
+.fast-action-btn.exercise {
+    border-color: rgba(242, 201, 76, 0.4);
 }
 
 /* --- Overhaul: The Silk Scrolls --- */
@@ -214,124 +324,72 @@ nav#nav-leaves {
     transform: translateY(-50%);
     z-index: 50;
     transition: all 0.6s var(--ease-out-expo);
-}
-
-.scroll-left {
-    left: clamp(10px, 2vw, 30px);
-}
-
-.scroll-right {
-    right: clamp(10px, 2vw, 30px);
-}
-
-/* Mobile Adaptive Scrolls */
-@media (max-width: 768px) {
-    .scroll-tab {
-        top: auto;
-        bottom: calc(var(--nav-height) + 120px) !important;
-        transform: none;
-    }
-
-    .scroll-left {
-        left: 5%;
-    }
-
-    .scroll-right {
-        right: 5%;
-    }
-
-    /* Force content to center on mobile */
-    .scroll-left .scroll-content,
-    .scroll-right .scroll-content {
-        position: fixed;
-        left: 50% !important;
-        right: auto !important;
-        top: auto !important;
-        bottom: 100px;
-        transform: translateX(-50%) translateY(20px) scale(0.9);
-        width: 10px;
-        /* Animate from small width */
-        margin: 0;
-        transform-origin: bottom center;
-    }
-
-    .scroll-tab.open .scroll-content {
-        width: 90vw !important;
-        height: 60vh;
-        transform: translateX(-50%) translateY(0) scale(1) !important;
-    }
-}
-
-.scroll-handle {
-    width: clamp(50px, 8vw, 65px);
-    height: clamp(120px, 20vh, 180px);
-    background: var(--glass-background);
-    backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
-    border-radius: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-    cursor: pointer;
-    transition: all 0.4s var(--ease-out-expo);
-}
-
-.scroll-handle:hover {
-    transform: scale(1.05) translateY(-5px);
-    border-color: var(--gold-shimmer);
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
-}
-
-/* Hide other scroll handles when one is open */
-body.scroll-mode-active .scroll-tab:not(.open) .scroll-handle {
-    opacity: 0;
     pointer-events: none;
-    transform: scale(0.8) translateY(20px);
-    transition: all 0.5s var(--ease-out-expo);
+    z-index: 7000;
+    /* Above nav and buttons */
 }
 
-body.scroll-mode-active .scroll-tab.open .scroll-handle {
-    pointer-events: none;
-    /* Can't click the handle while open to avoid double triggers */
-}
+/* Handle styles removed */
 
 .scroll-content {
-    position: absolute;
+    position: fixed;
     top: 50%;
-    transform: translateY(-50%) scale(0.9);
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
     width: 0;
-    height: clamp(300px, 60vh, 600px);
-    background: rgba(255, 255, 255, 0.02);
-    backdrop-filter: blur(40px);
-    border: 1px solid rgba(255, 215, 0, 0.1);
-    border-radius: 30px;
+    height: 0;
+    max-height: 80vh;
+    background: rgba(10, 15, 20, 0.98);
+    /* Increased opacity for readability */
+    backdrop-filter: blur(40px) saturate(150%);
+    -webkit-backdrop-filter: blur(40px) saturate(150%);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 40px;
     overflow: hidden;
     opacity: 0;
     pointer-events: none;
-    transition: all 0.8s var(--ease-out-expo);
-    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
-}
-
-.scroll-left .scroll-content {
-    left: 100%;
-    margin-left: 20px;
-}
-
-.scroll-right .scroll-content {
-    right: 100%;
-    margin-right: 20px;
+    transition: all 0.6s var(--ease-out-expo);
+    box-shadow: 0 50px 100px rgba(0, 0, 0, 1);
+    z-index: 5000;
+    /* Extremely high to be above everything */
 }
 
 .scroll-tab.open .scroll-content {
-    width: clamp(280px, 85vw, 450px);
+    width: clamp(320px, 90vw, 450px);
+    height: 70vh;
     opacity: 1;
     pointer-events: auto;
-    transform: translateY(-50%) scale(1);
+    transform: translate(-50%, -50%) scale(1);
 }
 
-/* Silk Scroll Interior */
+/* Specific Close Button for Scrolls */
+.scroll-close-btn {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 50%;
+    color: var(--gold-shimmer);
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 5050;
+    transition: all 0.4s var(--ease-out-expo);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.scroll-close-btn:hover {
+    transform: rotate(90deg) scale(1.1);
+    background: rgba(255, 215, 0, 0.1);
+    border-color: var(--gold-accent);
+}
+
 .scroll-inner-content {
     padding: 2.5rem;
     height: 100%;
@@ -382,9 +440,17 @@ body.scroll-mode-active .scroll-tab.open .scroll-handle {
 .modal {
     background: rgba(5, 10, 15, 0.4);
     /* More transparent */
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     transition: all 0.6s var(--ease-out-expo);
+    z-index: 9000 !important;
+    /* Above everything including scroll tabs */
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal:not(.hidden) {
+    pointer-events: auto;
 }
 
 .modal-backdrop {

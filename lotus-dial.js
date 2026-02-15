@@ -33,23 +33,24 @@ class LotusDial {
 
     setupEventListeners() {
         const sunGroup = document.getElementById('sun-core-group');
-        sunGroup?.addEventListener('mouseenter', () => this.toggleWhisper(true));
-        sunGroup?.addEventListener('mouseleave', () => this.toggleWhisper(false));
-        sunGroup?.addEventListener('click', () => {
+        sunGroup?.addEventListener('mouseenter', () => this.toggleInsight(true));
+        sunGroup?.addEventListener('mouseleave', () => this.toggleInsight(false));
+        sunGroup?.addEventListener('click', (e) => {
+            e.stopPropagation();
             window.dispatchEvent(new CustomEvent('modal:open', { detail: { modal: 'log' } }));
         });
     }
 
-    toggleWhisper(show) {
+    toggleInsight(show) {
         const standard = document.getElementById('sun-info-standard');
-        const whisper = document.getElementById('sun-info-whisper');
-        if (standard && whisper) {
+        const insight = document.getElementById('sun-info-insight');
+        if (standard && insight) {
             standard.style.opacity = show ? '0' : '1';
             // Use pointer-events to prevent interaction with hidden element
             standard.style.pointerEvents = show ? 'none' : 'auto';
 
-            whisper.style.opacity = show ? '1' : '0';
-            whisper.style.transition = 'opacity 0.4s ease';
+            insight.style.opacity = show ? '1' : '0';
+            insight.style.transition = 'opacity 0.4s ease';
         }
     }
 
@@ -231,11 +232,11 @@ class LotusDial {
         if (this.dateDayText) this.dateDayText.textContent = String(this.currentDay).padStart(2, '0');
         if (this.datePhaseText) this.datePhaseText.textContent = phase ? phase.toUpperCase() : '';
 
-        const whisperText = document.getElementById('horizon-whisper-text');
-        if (whisperText) {
+        const insightText = document.getElementById('daily-insight-text');
+        if (insightText) {
             const data = getPhaseData(phase);
-            const whisper = data.auraReadings[Math.floor(Math.random() * data.auraReadings.length)];
-            whisperText.textContent = whisper;
+            const insight = data.auraReadings[Math.floor(Math.random() * data.auraReadings.length)];
+            insightText.textContent = insight;
         }
     }
 

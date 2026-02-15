@@ -6,40 +6,81 @@
 class ParchmentScrolls {
     constructor() {
         this.tabs = document.querySelectorAll('.scroll-tab');
+        this.lastToggleTime = 0;
         this.init();
     }
 
     init() {
+        // Handle logic removed as it's now managed by central action buttons in app.js
+
+        // Bind close buttons
         this.tabs.forEach(tab => {
-            const handle = tab.querySelector('.scroll-handle');
-            handle?.addEventListener('click', () => this.toggleScroll(tab));
+            const closeBtn = tab.querySelector('.scroll-close-btn');
+            closeBtn?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.closeAll();
+            });
         });
 
-        // Close on outside click (ignore if clicking on modals or nav)
+        // Close on outside click (ignore if clicking on interactive elements)
         document.addEventListener('click', (e) => {
+            const isAnyScrollOpen = Array.from(this.tabs).some(tab => tab.classList.contains('open'));
+            const isAnyModalOpen = document.body.classList.contains('modal-open');
+
+            if (!isAnyScrollOpen && !isAnyModalOpen) return;
+
+            // IGNORE if the menu was just opened (within 400ms)
+            const scrollNow = Date.now();
+            if (this.lastToggleTime && (scrollNow - this.lastToggleTime < 400)) {
+                console.log('🛡️ scrollSystem: Ignoring click (Open transition active)');
+                return;
+            }
+            if (window.modalController && (scrollNow - window.modalController.lastActionTime < 400)) {
+                console.log('🛡️ scrollSystem: Ignoring click (Modal transition active)');
+                return;
+            }
+
             const isTab = e.target.closest('.scroll-tab');
             const isModal = e.target.closest('.modal');
-            const isNav = e.target.closest('nav');
+            const isNav = e.target.closest('nav') || e.target.closest('.nav-leaf');
+            const isActionBtn = e.target.closest('.fast-action-btn');
+            const isSunCore = e.target.closest('#sun-core-group');
 
-            if (!isTab && !isModal && !isNav) {
-                this.closeAll();
+            if (!isTab && !isModal && !isNav && !isActionBtn && !isSunCore) {
+                console.log('🌑 scrollSystem: Outside click closing all. Target:', e.target.tagName);
+                this.closeAll('outside-click');
+                if (window.modalController) window.modalController.closeAll('outside-click');
             }
-        });
+        }, true); // Use capture to ensure we intercept before bubbling
 
         // Update content on day change
         window.addEventListener('dial:dayChanged', (e) => this.updateContent(e.detail.day));
     }
 
     toggleScroll(tab) {
+        if (!tab) {
+            console.error('❌ toggleScroll: Tab is null');
+            return;
+        }
+
+        const now = Date.now();
+        if (now - this.lastToggleTime < 350) {
+            console.log('⏳ toggleScroll: Rate limited, ignoring');
+            return;
+        }
+        this.lastToggleTime = now;
+
+        const scrollType = tab.getAttribute('data-scroll');
         const isOpen = tab.classList.contains('open');
-        this.closeAll();
+        console.log(`📜 toggleScroll: ${isOpen ? 'CLOSING' : 'OPENING'} ${scrollType}`);
+
+        this.closeAll('toggleScroll-internal');
 
         if (!isOpen) {
             tab.classList.add('open');
             this.addBounceAnimation(tab);
             document.body.classList.add('scroll-mode-active');
-            const type = tab.getAttribute('data-scroll');
-            this.loadScrollContent(type);
+            this.loadScrollContent(scrollType);
         }
     }
 
@@ -74,7 +115,8 @@ class ParchmentScrolls {
         }, 400);
     }
 
-    closeAll() {
+    closeAll(source = 'unknown') {
+        console.log(`🌑 scrollSystem.closeAll() called [Source: ${source}]`);
         this.tabs.forEach(tab => {
             if (tab.classList.contains('open')) {
                 const content = tab.querySelector('.scroll-content');
@@ -88,11 +130,6 @@ class ParchmentScrolls {
                 }, 400);
             }
         });
-
-        const rituals = document.getElementById('scroll-rituals');
-        if (rituals && rituals.classList.contains('open')) {
-            this.closeScrollWithAnimation(rituals);
-        }
 
         document.body.classList.remove('scroll-mode-active');
     }
@@ -135,7 +172,7 @@ class ParchmentScrolls {
                 <p class="italic mb-6 text-[#faf4e4] opacity-80 tracking-wide font-light" style="line-height: 1.8;">${info.intro}</p>
                 <div class="space-y-8">
                     <div>
-                        <h4 class="font-display text-2xl font-light mb-4 text-[#ffd700] tracking-[0.15em]">Sacred Foods</h4>
+                        <h4 class="font-display text-2xl font-light mb-4 text-[#ffd700] tracking-[0.15em]">Recommended Foods</h4>
                         <ul class="space-y-6">
                             ${info.foods.map(f => `
                                 <li class="flex items-start gap-3">

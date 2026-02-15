@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LotusCycle Aura | Sacred Cycle Tracker</title>
+    <title>LotusCycle Aura | Cycle Tracker</title>
     <meta name="description"
-        content="A photorealistic, biophilic menstrual cycle tracker. Track your sacred rhythm with the Lotus Dial Aura.">
+        content="A photorealistic, biophilic menstrual cycle tracker. Track your rhythm with the Lotus Dial Aura.">
     <meta name="theme-color" content="#0a2a3a">
 
     <!-- Google Fonts -->
@@ -100,35 +100,28 @@
                 <stop offset="100%" stop-color="rgba(255,215,0,0.4)" />
             </radialGradient>
 
-            <filter id="petal-texture" x="-20%" y="-20%" width="140%" height="140%">
-                <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
-                <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" />
-                <feComposite operator="in" in2="SourceGraphic" />
-            </filter>
         </defs>
     </svg>
 
     <!-- Main App Engine -->
     <div id="app">
 
-        <!-- Header: The Title Sphere -->
+        <!-- Header: The Title Sphere (Simplified - Space preserved) -->
         <header>
-            <h1 id="app-title">LotusCycle <span class="text-gold-shimmer">Aura</span></h1>
-            <div class="h-[1px] w-32 bg-gradient-to-r from-transparent via-[#ffd700] to-transparent mx-auto mt-2"></div>
-            <p id="phase-subtitle">Harmonizing the Sacred Rhythm</p>
+            <div
+                class="h-[1px] w-32 bg-gradient-to-r from-transparent via-[#ffd700] to-transparent mx-auto mt-12 opacity-20">
+            </div>
+            <p id="phase-subtitle">Daily Insights & Guidance</p>
         </header>
 
         <!-- Main: The Living Mandala -->
         <main>
-            <!-- Left Scroll: The Nourisher -->
+            <!-- Left Scroll: The Nourisher (Handle Removed) -->
             <section id="scroll-nourishment" class="scroll-tab scroll-left" data-scroll="nourishment">
-                <div class="scroll-handle">
-                    <span class="text-2xl mb-2">🍃</span>
-                    <span class="scroll-label writing-vertical">Nourish</span>
-                </div>
                 <div class="scroll-content">
+                    <button class="scroll-close-btn">&times;</button>
                     <div class="scroll-inner-content">
-                        <h3>Ayurvedic Wisdom</h3>
+                        <h3>Nourishment</h3>
                         <div id="nourishment-content"></div>
                     </div>
                 </div>
@@ -159,13 +152,13 @@
                                 class="text-[11px] uppercase tracking-[0.25em] fill-white/80 font-semibold">MENSTRUAL</text>
                         </g>
 
-                        <g id="sun-info-whisper" class="opacity-0 pointer-events-none transition-opacity duration-300">
+                        <g id="sun-info-insight" class="opacity-0 pointer-events-none transition-opacity duration-300">
                             <foreignObject x="155" y="155" width="90" height="90">
                                 <div xmlns="http://www.w3.org/1999/xhtml"
                                     class="w-full h-full flex items-center justify-center text-center">
-                                    <p id="horizon-whisper-text"
+                                    <p id="daily-insight-text"
                                         class="text-[11px] font-serif italic text-[#4a2a0a] leading-tight drop-shadow-sm select-none p-2 rounded-full backdrop-blur-[2px] bg-gradient-radial from-white/40 to-transparent">
-                                        Whisper of the river...
+                                        Loading insight...
                                     </p>
                                 </div>
                             </foreignObject>
@@ -174,15 +167,26 @@
                 </svg>
             </div>
 
-            <!-- Right Scroll: The Sadhana -->
+            <!-- Action Center Buttons -->
+            <div class="center-action-buttons w-full px-1 animate-fade-in-up" style="animation-delay: 800ms;">
+                <button id="action-nourish" class="fast-action-btn nourish" type="button">
+                    <span class="btn-glow"></span>
+                    <span class="btn-icon">🍃</span>
+                    <span class="btn-text">Nourish</span>
+                </button>
+                <button id="action-exercise" class="fast-action-btn exercise" type="button">
+                    <span class="btn-glow"></span>
+                    <span class="btn-icon">🧘</span>
+                    <span class="btn-text">Asanas</span>
+                </button>
+            </div>
+
+            <!-- Right Scroll: The Sadhana (Handle Removed) -->
             <section id="scroll-asanas" class="scroll-tab scroll-right" data-scroll="asanas">
-                <div class="scroll-handle">
-                    <span class="text-2xl mb-2">🧘</span>
-                    <span class="scroll-label writing-vertical">Asanas</span>
-                </div>
                 <div class="scroll-content">
+                    <button class="scroll-close-btn">&times;</button>
                     <div class="scroll-inner-content">
-                        <h3>Sacred Practice</h3>
+                        <h3>Practice</h3>
                         <div id="asanas-content"></div>
                     </div>
                 </div>
@@ -191,7 +195,7 @@
 
         <!-- Navigation: The Sacred Leaves -->
         <nav id="nav-leaves">
-            <button id="nav-history" class="nav-leaf" aria-label="History">
+            <button id="nav-history" class="nav-leaf" aria-label="History" type="button">
                 <svg viewBox="0 0 80 100">
                     <!-- Leaf Body -->
                     <path d="M40 5 Q10 30 10 60 Q10 95 40 95 Q70 95 70 60 Q70 30 40 5" fill="rgba(42, 106, 58, 0.4)"
@@ -207,7 +211,7 @@
                 <span class="nav-label">History</span>
             </button>
 
-            <button id="nav-log" class="nav-leaf" aria-label="Log Ritual">
+            <button id="nav-log" class="nav-leaf" aria-label="Log Ritual" type="button">
                 <div
                     class="relative w-16 h-16 flex items-center justify-center filter drop-shadow-[0_0_15px_rgba(255,215,0,0.6)]">
                     <svg viewBox="0 0 64 64" class="w-full h-full overflow-visible">
@@ -232,7 +236,7 @@
                 <span class="nav-label">Log Entry</span>
             </button>
 
-            <button id="nav-rituals" class="nav-leaf" aria-label="Rituals">
+            <button id="nav-rituals" class="nav-leaf" aria-label="Rituals" type="button">
                 <svg viewBox="0 0 80 100">
                     <!-- Leaf Body -->
                     <path d="M40 5 Q10 30 10 60 Q10 95 40 95 Q70 95 70 60 Q70 30 40 5" fill="rgba(26, 74, 90, 0.4)"
@@ -258,7 +262,7 @@
             <button id="close-log-modal" class="modal-close"></button>
             <h2
                 class="font-display text-4xl text-[#ffd700] mb-8 border-b border-white/10 pb-6 tracking-widest uppercase">
-                Sacred Log</h2>
+                Daily Log</h2>
             <div id="log-body" class="space-y-6"></div>
             <button id="save-log"
                 class="w-full mt-10 py-5 text-xl text-[#faf4e4] hover:scale-[1.02] active:scale-95 transition-transform">Record
@@ -273,7 +277,7 @@
             <button id="close-history-modal" class="modal-close"></button>
             <h2
                 class="font-display text-4xl text-[#ffd700] mb-8 border-b border-white/10 pb-6 tracking-widest uppercase">
-                Sacred History</h2>
+                History</h2>
             <div id="history-body" class="space-y-6"></div>
         </div>
     </div>
@@ -285,7 +289,7 @@
             <button id="close-rituals-modal" class="modal-close"></button>
             <h2
                 class="font-display text-4xl text-[#ffd700] mb-8 border-b border-white/10 pb-6 tracking-widest uppercase">
-                Sacred Rituals</h2>
+                Self-Care</h2>
             <div id="rituals-content" class="space-y-6"></div>
         </div>
     </div>

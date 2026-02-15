@@ -130,6 +130,12 @@ class LotusCycleApp {
         window.addEventListener('store:updated', () => {
             this.refreshUI();
         });
+
+        window.addEventListener('modal:open', (e) => {
+            if (window.modalController) {
+                window.modalController.open(e.detail.modal);
+            }
+        });
     }
 
     checkOnboarding() {
@@ -146,38 +152,65 @@ class LotusCycleApp {
     setupNavigation() {
         console.log('🔗 Setting up navigation listeners...');
 
-        setTimeout(() => {
+        // 1. Core Bottom Nav (Leaves)
+        const bindNav = () => {
             const historyBtn = document.getElementById('nav-history');
             const logBtn = document.getElementById('nav-log');
             const ritualsBtn = document.getElementById('nav-rituals');
 
-            if (!historyBtn || !logBtn || !ritualsBtn) {
-                console.error('❌ One or more buttons not found in DOM');
-                return;
+            if (historyBtn && logBtn && ritualsBtn && window.modalController) {
+                console.log('✅ Binding bottom navigation...');
+                const openHistory = (e) => { e.preventDefault(); e.stopPropagation(); window.modalController.open('history'); };
+                const openLog = (e) => { e.preventDefault(); e.stopPropagation(); window.modalController.open('log'); };
+                const openRituals = (e) => { e.preventDefault(); e.stopPropagation(); window.modalController.open('rituals'); };
+
+                historyBtn.addEventListener('click', openHistory);
+                logBtn.addEventListener('click', openLog);
+                ritualsBtn.addEventListener('click', openRituals);
             }
+        };
 
-            if (window.modalController) {
-                historyBtn.addEventListener('click', (e) => {
+        // 2. Center Action Buttons (Robust Binding)
+        let retryCount = 0;
+        const bindActions = () => {
+            const nourishAction = document.getElementById('action-nourish');
+            const exerciseAction = document.getElementById('action-exercise');
+
+            if (nourishAction && exerciseAction && window.scrollSystem) {
+                console.log('✅ Binding Fast Action buttons (Direct)...');
+
+                nourishAction.onclick = (e) => {
+                    console.log('🍃 CLICK: Nourish Button Layer');
                     e.preventDefault();
                     e.stopPropagation();
-                    window.modalController.open('history');
-                });
+                    const tab = document.querySelector('[data-scroll="nourishment"]');
+                    if (tab && window.scrollSystem) {
+                        window.scrollSystem.toggleScroll(tab);
+                    } else {
+                        console.error('❌ Could not find nourishment tab or scrollSystem!');
+                    }
+                };
 
-                logBtn.addEventListener('click', (e) => {
+                exerciseAction.onclick = (e) => {
+                    console.log('🧘 CLICK: Exercise Button Layer');
                     e.preventDefault();
                     e.stopPropagation();
-                    window.modalController.open('log');
-                });
+                    const tab = document.querySelector('[data-scroll="asanas"]');
+                    if (tab && window.scrollSystem) {
+                        window.scrollSystem.toggleScroll(tab);
+                    } else {
+                        console.error('❌ Could not find asanas tab or scrollSystem!');
+                    }
+                };
 
-                ritualsBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.modalController.open('rituals');
-                });
-
-                console.log('✅ All navigation listeners bound successfully');
+            } else if (retryCount < 20) {
+                retryCount++;
+                setTimeout(bindActions, 150);
             }
-        }, 300); // 300ms delay to ensure everything is mounted
+        };
+
+        bindNav();
+        bindActions();
     }
 
     createBurst(el) {
@@ -198,21 +231,14 @@ class LotusCycleApp {
             const data = getPhaseData(phase);
 
             // Update Global UI elements (Day and Phase Name)
-            // Update Global UI elements (Day and Phase Name)
-            const currentDayLabel = document.getElementById('current-cycle-day');
-            const phaseNameLabel = document.getElementById('phase-name');
-
-            // Additional day element inside sun core
+            // The sun core elements are the primary display
             const sunCoreDay = document.getElementById('date-day');
             const sunCorePhase = document.getElementById('date-phase');
-
-            if (currentDayLabel) currentDayLabel.textContent = day;
-            if (phaseNameLabel) phaseNameLabel.textContent = data.name;
 
             if (sunCoreDay) sunCoreDay.textContent = String(day).padStart(2, '0');
             if (sunCorePhase) sunCorePhase.textContent = data.name;
 
-            // Update Subtitle & Colors
+            // Update Subtitle
             const subtitle = document.getElementById('phase-subtitle');
             if (subtitle) subtitle.textContent = data.subtitle;
 
@@ -240,6 +266,22 @@ class LotusCycleApp {
             if (window.scrollSystem) {
                 window.scrollSystem.updateContent(day);
             }
+
+            // NEW: Update Action Ribbons with specific recommendations
+            const nourishText = document.querySelector('#action-nourish .btn-text');
+            const exerciseText = document.querySelector('#action-exercise .btn-text');
+
+            if (nourishText && data.nourishment?.foods?.length > 0) {
+                // Pick a random food or the first one as representative
+                const food = data.nourishment.foods[0].name;
+                nourishText.textContent = food;
+            }
+
+            if (exerciseText && data.asanas?.practices?.length > 0) {
+                const practice = data.asanas.practices[0].name;
+                exerciseText.textContent = practice;
+            }
+
         } catch (err) {
             console.error('❌ Error in refreshUI:', err);
         }

@@ -6,7 +6,7 @@
 const PHASE_DATA = {
     menstrual: {
         name: 'Menstrual Phase',
-        subtitle: 'Rest & Release (Apana)',
+        subtitle: 'Rest & Release',
         days: [1, 2, 3, 4, 5],
         color: '#7A1E2D',
         colorDark: '#8a2a2a',
@@ -14,14 +14,18 @@ const PHASE_DATA = {
         hormones: { estrogen: 'low', progesterone: 'low' },
         energy: 'low',
         auraReadings: [
-            "Your body is a temple of release. Let the river carry away the old.",
-            "In stillness, the deepest wisdom is heard. Honor the silence of your soul.",
-            "Apana Vayu flows downward, grounding you to the earth's ancient heart."
+            "Focus on release and comfortable stillness.",
+            "Listen to your body's need for rest.",
+            "Stay grounded and prioritize your comfort."
         ],
-        rituals: [
-            { name: "Salt Soak", desc: "Bathe with Epsom salts and rose petals to ground your energy." },
-            { name: "Journaling", desc: "Write 3 things you are releasing this cycle." }
-        ],
+        rituals: {
+            intro: "The Menstrual Phase is a time of winter—a sacred inward journey for restoration.",
+            practices: [
+                { name: "Salt Soak", desc: "Warm bath with Epsom salts to relax muscles and ground your energy.", icon: "🛀" },
+                { name: "Sacred Silence", desc: "Spend 20 minutes in absolute silence to listen to your inner whisper.", icon: "🤫" },
+                { name: "Reflect", desc: "Note down anything you want to prioritize or release this cycle.", icon: "📓" }
+            ]
+        },
 
         nourishment: {
             title: 'Nourishment for Restoration',
@@ -39,17 +43,17 @@ const PHASE_DATA = {
         },
 
         asanas: {
-            title: 'Restorative Yoga (Sadhana)',
-            intro: 'Honor the downward flow of energy (Apana Vayu). Avoid inversions.',
+            title: 'Restorative Yoga',
+            intro: 'Focus on gentle movements and avoid intense inversions.',
             practices: [
-                { name: 'Baddha Konasana', desc: 'Butterfly pose - opens pelvic region', duration: '5 mins' },
-                { name: 'Balasana', desc: 'Child’s pose - grounds the mind', duration: '5 mins' },
-                { name: 'Supta Virasana (Supported)', desc: 'Stretches the abdomen gently', duration: '3 mins' },
-                { name: 'Nadi Shodhana', desc: 'Alternate nostril breathing for balance', duration: '10 mins' },
-                { name: 'Yoga Nidra', desc: 'Deep psychic sleep for restoration', duration: '20 mins' }
+                { name: 'Butterfly Pose', desc: 'Gently opens the hips', duration: '5 mins' },
+                { name: 'Child’s Pose', desc: 'Relaxes the spine and mind', duration: '5 mins' },
+                { name: 'Supported Reclining Pose', desc: 'Stretches the core gently', duration: '3 mins' },
+                { name: 'Deep Breathing', desc: 'Calming breath-work', duration: '10 mins' },
+                { name: 'Deep Rest', desc: 'Total body relaxation', duration: '20 mins' }
             ],
-            avoid: ['Sirsasana (Headstand)', 'Sarvangasana (Shoulderstand)', 'Intense Surya Namaskar'],
-            highlight: 'Focus on breath. Let each exhale release physical tension.'
+            avoid: ['Headstands', 'Intense Cardio', 'Heavy Lifting'],
+            highlight: 'Focus on deep exhales to release physical tension.'
         },
 
         symptoms: [
@@ -62,7 +66,7 @@ const PHASE_DATA = {
 
     follicular: {
         name: 'Follicular Phase',
-        subtitle: 'Rise & Renew (Kapha to Pitta)',
+        subtitle: 'Rise & Renew',
         days: [6, 7, 8, 9, 10, 11, 12, 13],
         color: '#7FB3A6',
         colorDark: '#c48484',
@@ -70,14 +74,18 @@ const PHASE_DATA = {
         hormones: { estrogen: 'rising', progesterone: 'low' },
         energy: 'increasing',
         auraReadings: [
-            "The seeds are planted. Can you feel the awakening of your inner garden?",
-            "Energy rises like the morning sun. Focus your intention with grace.",
-            "A time for creation. The petals of your potential are beginning to stir."
+            "Energy is returning. Plan your upcoming goals.",
+            "Focus on fresh starts and new projects.",
+            "You may feel more creative and outgoing today."
         ],
-        rituals: [
-            { name: "Intention Setting", desc: "Light a green candle and visualize your seeds of growth." },
-            { name: "Morning Dew Walk", desc: "Walk barefoot on grass to connect with rising Kapha energy." }
-        ],
+        rituals: {
+            intro: "The Follicular Phase is your internal spring—a time of renewal and planting seeds.",
+            practices: [
+                { name: "New Beginnings", desc: "Start one small habit or project that excites your spirit.", icon: "🌱" },
+                { name: "Sun Gazing", desc: "Spend a few minutes watching the sunrise to align with the light.", icon: "🌅" },
+                { name: "Nature Walk", desc: "Fresh air to boost your rising energy and creative flow.", icon: "🚶‍♀️" }
+            ]
+        },
 
         nourishment: {
             title: 'Nourishment for Growth',
@@ -95,17 +103,17 @@ const PHASE_DATA = {
         },
 
         asanas: {
-            title: 'Energizing Flow',
-            intro: 'Build heat and flexibility as your energy ascends.',
+            title: 'Energizing Yoga',
+            intro: 'Build heat and flexibility as your energy increases.',
             practices: [
-                { name: 'Surya Namaskar', desc: 'Sun Salutations to build heat', duration: '12 rounds' },
-                { name: 'Vrikshasana', desc: 'Tree pose for focus and balance', duration: '2 mins each side' },
-                { name: 'Trikonasana', desc: 'Triangle pose for lateral strength', duration: '3 mins' },
-                { name: 'Kapalbhati', desc: 'Skull shining breath for vitality', duration: '5 mins' },
-                { name: 'Dhanurasana', desc: 'Bow pose to stimulate ovaries', duration: '2 mins' }
+                { name: 'Sun Salutations', desc: 'Dynamic flow to build heat', duration: '12 rounds' },
+                { name: 'Tree Pose', desc: 'Improves focus and balance', duration: '2 mins each side' },
+                { name: 'Triangle Pose', desc: 'Strengthens legs and core', duration: '3 mins' },
+                { name: 'Power Breathing', desc: 'Energizing breath-work', duration: '5 mins' },
+                { name: 'Bow Pose', desc: 'Stimulates core and energy', duration: '2 mins' }
             ],
-            avoid: ['None - push your boundaries gently'],
-            highlight: 'Set a new Sankalpa (intention) for this cycle.'
+            avoid: ['None - stay active and energized'],
+            highlight: 'Set a clear intention for what you want to achieve.'
         },
 
         symptoms: [
@@ -118,7 +126,7 @@ const PHASE_DATA = {
 
     ovulatory: {
         name: 'Ovulatory Phase',
-        subtitle: 'Radiate & Connect (Pitta Peak)',
+        subtitle: 'Radiate & Connect',
         days: [14, 15, 16],
         color: '#F2C94C',
         colorDark: '#c48424',
@@ -126,14 +134,18 @@ const PHASE_DATA = {
         hormones: { estrogen: 'peak', progesterone: 'rising' },
         energy: 'peak',
         auraReadings: [
-            "You are at your peak radiance. Shine brightly, for the world sees your light.",
-            "Magnetic attraction is your nature. Speak your truth with confidence.",
-            "The lotus is fully bloomed. Celebrate the abundance of your being."
+            "You are at your peak energy level. Enjoy social time.",
+            "Confidence is high. A great time for communication.",
+            "Feel your most vibrant and active today."
         ],
-        rituals: [
-            { name: "Mirror Work", desc: "Look into your eyes and affirm your divine charisma." },
-            { name: "Flower Offering", desc: "Place fresh yellow flowers on your altar to honor your fire." }
-        ],
+        rituals: {
+            intro: "The Ovulatory Phase is your internal summer—a time of maximum radiance and connection.",
+            practices: [
+                { name: "Socialize", desc: "Connect with friends or collaborate on something meaningful.", icon: "🤝" },
+                { name: "Mirror Work", desc: "Look into your eyes and affirm your inner and outer beauty.", icon: "🪞" },
+                { name: "Dance Ritual", desc: "Move your body freely to celebrate your peak vitality.", icon: "💃" }
+            ]
+        },
 
         nourishment: {
             title: 'Nourishment for Radiance',
@@ -151,17 +163,17 @@ const PHASE_DATA = {
         },
 
         asanas: {
-            title: 'Peak Radiance Yoga',
-            intro: 'Connect with your heart and core power.',
+            title: 'Power Yoga',
+            intro: 'Focus on strength and heart-opening movements.',
             practices: [
-                { name: 'Ustrasana', desc: 'Camel pose - opens the heart', duration: '3 mins' },
-                { name: 'Virabhadrasana II', desc: 'Warrior II for confidence', duration: '4 mins' },
-                { name: 'Surya Bhedana', desc: 'Right-nostril breathing for fire', duration: '5 mins' },
-                { name: 'Chakrasana', desc: 'Wheel pose (if advanced) for peak energy', duration: '2 mins' },
-                { name: 'Dance (Bharatanatyam/Free)', desc: 'Expressive movement', duration: '15 mins' }
+                { name: 'Camel Pose', desc: 'Deep heart and chest opener', duration: '3 mins' },
+                { name: 'Warrior II', desc: 'Builds confidence and stability', duration: '4 mins' },
+                { name: 'Active Breathing', desc: 'Builds internal heat', duration: '5 mins' },
+                { name: 'Wheel Pose', desc: 'High energy backbend', duration: '2 mins' },
+                { name: 'Creative Flow', desc: 'Expressive movement', duration: '15 mins' }
             ],
             avoid: [],
-            highlight: 'Radiate your energy outward. This is your most social time.'
+            highlight: 'Use this peak energy for your most challenging workouts.'
         },
 
         symptoms: [
@@ -174,7 +186,7 @@ const PHASE_DATA = {
 
     luteal: {
         name: 'Luteal Phase',
-        subtitle: 'Reflect & Ground (Transition to Vata)',
+        subtitle: 'Reflect & Ground',
         days: [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
         color: '#6B5B95',
         colorDark: '#2a5a8e',
@@ -182,14 +194,18 @@ const PHASE_DATA = {
         hormones: { estrogen: 'declining', progesterone: 'peak' },
         energy: 'declining',
         auraReadings: [
-            "The tide turns inward. Nurture the depths of your inner sanctuary.",
-            "Reflection is the key to clarity. Look back with love, move forward with peace.",
-            "The harvest is near. Conserve your energy for the coming quiet."
+            "Energy is turning inward. Focus on self-care.",
+            "Reflection brings clarity. Take some quiet time.",
+            "Conserve your energy as your cycle nears completion."
         ],
-        rituals: [
-            { name: "Tea Meditation", desc: "Sip saffron tea in complete silence, observing your thoughts." },
-            { name: "Space Clearing", desc: "Burn sandalwood to purify your environment for the winter." }
-        ],
+        rituals: {
+            intro: "The Luteal Phase is your internal autumn—a time for focus, boundaries, and clearing.",
+            practices: [
+                { name: "Digital Detox", desc: "Turn off screens 2 hours before bed to calm your mind.", icon: "📵" },
+                { name: "Clear Space", desc: "Tidy your physical environment to feel more mentally clear.", icon: "🧹" },
+                { name: "Sage Blessing", desc: "Cleanse your space with incense or sage for clarity.", icon: "🌬️" }
+            ]
+        },
 
         nourishment: {
             title: 'Nourishment for Balance',
@@ -207,17 +223,17 @@ const PHASE_DATA = {
         },
 
         asanas: {
-            title: 'Grounding & Introspection',
-            intro: 'Turn your awareness inward. Focus on stability and grounding.',
+            title: 'Grounding Yoga',
+            intro: 'Turn your awareness inward. Focus on stability.',
             practices: [
-                { name: 'Paschimottanasana', desc: 'Forward fold - calms the mind', duration: '5 mins' },
-                { name: 'Setu Bandhasana', desc: 'Bridge pose - supports thyroid', duration: '4 mins' },
-                { name: 'Viparita Karani', desc: 'Legs up the wall - reduces swelling', duration: '10 mins' },
-                { name: 'Bhramari Pranayama', desc: 'Bee breath to soothe the nerves', duration: '5 mins' },
-                { name: 'Candle Gazing (Trataka)', desc: 'Focus & meditation', duration: '5 mins' }
+                { name: 'Forward Fold', desc: 'Calms the mind and nervous system', duration: '5 mins' },
+                { name: 'Bridge Pose', desc: 'Mild inversion for relaxation', duration: '4 mins' },
+                { name: 'Legs Up Wall', desc: 'Reduces swelling and restores energy', duration: '10 mins' },
+                { name: 'Calming Breath', desc: 'Soothes the nerves', duration: '5 mins' },
+                { name: 'Focus Meditation', desc: 'Clear the mental clutter', duration: '5 mins' }
             ],
-            avoid: ['Intense inversions right before period'],
-            highlight: 'Declutter your space and your mind. Prepare for your "winter".'
+            avoid: ['Intense power yoga right before period'],
+            highlight: 'Declutter your thoughts and prepare for your period.'
         },
 
         symptoms: [

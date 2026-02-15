@@ -133,32 +133,44 @@ class RiverEngine {
 
     animate() {
         const now = Date.now();
-        this.time += 0.003; // Slower for more fluid motion
-        this.causticTime += 0.001; // Very slow drift for caustics
+
+        // Throttling to ~30fps for CPU relief
+        if (!this.lastFrameTime) this.lastFrameTime = now;
+        const delta = now - this.lastFrameTime;
+        if (delta < 32) {
+            requestAnimationFrame(() => this.animate());
+            return;
+        }
+        this.lastFrameTime = now;
+
+        this.time += 0.003;
+        this.causticTime += 0.001;
         this.mistTime += 0.002;
 
         // Sacred Heartbeat - periodic ripple from center
-        if (now - this.lastHeartbeat > 5000) {
+        if (now - this.lastHeartbeat > 7000) {
             this.createRipple(this.width / 2, this.height / 2, 0.4);
             this.lastHeartbeat = now;
         }
 
         this.drawRiver();
-        this.drawCaustics(); // New caustic light layer
+        this.drawCaustics();
         this.drawMist();
         this.drawParticles();
         requestAnimationFrame(() => this.animate());
     }
 
     initParticles(count) {
-        for (let i = 0; i < count; i++) {
+        // Reduced particle count for performance
+        const pCount = 15;
+        for (let i = 0; i < pCount; i++) {
             this.particles.push({
                 x: Math.random() * window.innerWidth,
                 y: Math.random() * window.innerHeight,
-                vx: (Math.random() - 0.5) * 0.3,
-                vy: (Math.random() - 0.5) * 0.3,
-                size: Math.random() * 2 + 0.5,
-                alpha: Math.random() * 0.3 + 0.1,
+                vx: (Math.random() - 0.5) * 0.2,
+                vy: (Math.random() - 0.5) * 0.2,
+                size: Math.random() * 1.5 + 0.5,
+                alpha: Math.random() * 0.2 + 0.05,
                 phase: Math.random() * Math.PI * 2
             });
         }
@@ -213,20 +225,21 @@ class RiverEngine {
 
     drawSilkySurface(colors) {
         this.ctx.save();
-        const step = 80;
+        // Increased step size for fewer draw calls
+        const step = 150;
         for (let x = -step; x < this.width + step; x += step) {
             for (let y = -step; y < this.height + step; y += step) {
-                const wave1 = Math.sin(x * 0.002 + this.time * 0.4) * 0.5;
-                const wave2 = Math.sin(y * 0.003 + this.time * 0.3) * 0.5;
+                const wave1 = Math.sin(x * 0.0015 + this.time * 0.3) * 0.5;
+                const wave2 = Math.sin(y * 0.0025 + this.time * 0.25) * 0.5;
                 const combined = (wave1 + wave2) / 2;
                 const normalized = (combined + 1) / 2;
 
-                if (normalized > 0.4) {
-                    const size = step * normalized * 2;
-                    const alpha = normalized * 0.12;
+                if (normalized > 0.5) {
+                    const size = step * normalized * 1.8;
+                    const alpha = normalized * 0.1;
 
                     const gradient = this.ctx.createRadialGradient(x, y, 0, x, y, size);
-                    gradient.addColorStop(0, colors.shimmer + '1a'); // Very low alpha
+                    gradient.addColorStop(0, colors.shimmer + '14');
                     gradient.addColorStop(1, 'transparent');
 
                     this.ctx.fillStyle = gradient;
@@ -247,34 +260,32 @@ class RiverEngine {
     }
 
     drawCaustics() {
-        // Drifting caustic light layer
         const colors = this.phaseColors[this.currentPhase];
         this.ctx.save();
         this.ctx.globalCompositeOperation = 'screen';
 
-        // Multiple caustic light patterns
-        for (let i = 0; i < 5; i++) {
-            const offsetX = Math.sin(this.causticTime * 0.5 + i * 1.2) * this.width * 0.3;
-            const offsetY = Math.cos(this.causticTime * 0.3 + i * 0.8) * this.height * 0.3;
+        // Reduced number of caustic patterns
+        for (let i = 0; i < 3; i++) {
+            const offsetX = Math.sin(this.causticTime * 0.4 + i * 1.5) * this.width * 0.25;
+            const offsetY = Math.cos(this.causticTime * 0.2 + i * 1.1) * this.height * 0.25;
             const baseX = this.width / 2 + offsetX;
             const baseY = this.height / 2 + offsetY;
 
-            // Create organic caustic patterns using sine waves
-            for (let j = 0; j < 3; j++) {
-                const angle = (i * 72 + j * 120) * Math.PI / 180;
-                const dist = 200 + Math.sin(this.causticTime + i) * 100;
-                const x = baseX + Math.cos(angle) * dist;
-                const y = baseY + Math.sin(angle) * dist;
-                const size = 150 + Math.sin(this.causticTime * 0.7 + i + j) * 50;
+            const angle = (i * 120) * Math.PI / 180;
+            const dist = 180 + Math.sin(this.causticTime + i) * 80;
+            const x = baseX + Math.cos(angle) * dist;
+            const y = baseY + Math.sin(angle) * dist;
+            const size = 200 + Math.sin(this.causticTime * 0.6 + i) * 60;
 
-                const gradient = this.ctx.createRadialGradient(x, y, 0, x, y, size);
-                gradient.addColorStop(0, colors.caustic);
-                gradient.addColorStop(0.3, colors.caustic.replace(/[\d.]+\)/, '0.08)'));
-                gradient.addColorStop(1, 'transparent');
+            const gradient = this.ctx.createRadialGradient(x, y, 0, x, y, size);
+            gradient.addColorStop(0, colors.caustic);
+            gradient.addColorStop(0.4, 'transparent');
 
-                this.ctx.fillStyle = gradient;
-                this.ctx.fillRect(0, 0, this.width, this.height);
-            }
+            this.ctx.fillStyle = gradient;
+            // Only draw where the caustic is, not full screen
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, size, 0, Math.PI * 2);
+            this.ctx.fill();
         }
 
         this.ctx.restore();
@@ -284,33 +295,19 @@ class RiverEngine {
         if (!this.mistCtx) return;
         this.mistCtx.clearRect(0, 0, this.width, this.height);
 
-        const gradient = this.mistCtx.createRadialGradient(
-            this.width / 2, this.height / 2, 0,
-            this.width / 2, this.height / 2, this.width * 0.8
-        );
+        const alpha = 0.04 + Math.sin(this.mistTime) * 0.01;
 
-        const alpha = 0.04 + Math.sin(this.mistTime) * 0.015;
-        gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
-        gradient.addColorStop(0.6, `rgba(255, 255, 255, ${alpha * 0.5})`);
-        gradient.addColorStop(1, 'transparent');
+        // Single, simpler background drift
+        const x = (Math.sin(this.mistTime * 0.3) * 0.2 + 0.5) * this.width;
+        const y = (Math.cos(this.mistTime * 0.2) * 0.2 + 0.5) * this.height;
+        const r = this.width * 0.7;
 
-        this.mistCtx.fillStyle = gradient;
+        const cloudGlow = this.mistCtx.createRadialGradient(x, y, 0, x, y, r);
+        cloudGlow.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+        cloudGlow.addColorStop(1, 'transparent');
+
+        this.mistCtx.fillStyle = cloudGlow;
         this.mistCtx.fillRect(0, 0, this.width, this.height);
-
-        // Drifting ethereal clouds
-        for (let i = 0; i < 4; i++) {
-            const x = (Math.sin(this.mistTime * 0.4 + i * 1.5) * 0.25 + 0.5) * this.width;
-            const y = (Math.cos(this.mistTime * 0.25 + i * 1.2) * 0.25 + 0.5) * this.height;
-            const r = (Math.sin(this.mistTime * 0.15 + i) * 80 + 220);
-
-            const cloudGlow = this.mistCtx.createRadialGradient(x, y, 0, x, y, r);
-            cloudGlow.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.6})`);
-            cloudGlow.addColorStop(0.4, `rgba(255, 255, 255, ${alpha * 0.3})`);
-            cloudGlow.addColorStop(1, 'transparent');
-
-            this.mistCtx.fillStyle = cloudGlow;
-            this.mistCtx.fillRect(0, 0, this.width, this.height);
-        }
     }
 
     updateRipples() {
