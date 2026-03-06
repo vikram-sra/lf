@@ -3,14 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>LotusCycle Aura | Cycle Tracker</title>
-    <meta name="description"
-        content="A photorealistic, biophilic menstrual cycle tracker. Track your rhythm with the Lotus Dial Aura.">
-    <meta name="theme-color" content="#0a2a3a">
+    <meta name="description" content="A premium, biophilic menstrual cycle tracker.">
+    <meta name="theme-color" content="#fef9f2">
+    <link rel="manifest" href="manifest.json">
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -19,107 +17,92 @@
 
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="premium-effects.css">
-    <!-- Tailwind CSS for utility beauty -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        display: ['Cormorant Garamond', 'serif'],
-                        body: ['Outfit', 'sans-serif'],
-                    },
-                    colors: {
-                        gold: '#ffd700',
-                    }
-                }
-            }
-        }
-    </script>
 </head>
 
-<body class="bg-river-deep select-none">
+<body>
+    <!-- SVG Blue Lake Water Background -->
+    <div id="svg-water-container" aria-hidden="true">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="water-svg">
+            <g class="water-waves">
+                <path class="wave wave-1" d="M-5,45 C20,35 40,55 70,45 C90,35 105,45 105,45 L105,105 L-5,105 Z"
+                    fill="rgba(61,165,217,0.12)" />
+                <path class="wave wave-2" d="M-5,50 C25,60 55,30 85,50 C100,60 105,50 105,50 L105,105 L-5,105 Z"
+                    fill="rgba(0,180,216,0.08)" />
+                <path class="wave wave-3" d="M-5,35 C30,25 60,45 90,35 C100,30 105,35 105,35 L105,105 L-5,105 Z"
+                    fill="rgba(126,200,227,0.06)" />
 
-    <!-- Environmental Layers -->
-    <div id="river-container">
-        <canvas id="river-canvas"></canvas>
-    </div>
-    <div id="mist-container">
-        <canvas id="mist-canvas"></canvas>
-    </div>
-    <div class="sacred-grid"></div>
-    <div id="ambient-overlay" class="fixed inset-0 pointer-events-none -z-5 opacity-30 mix-blend-soft-light"></div>
+                <path class="wave wave-4" d="M-5,65 C15,55 35,75 60,65 C85,55 105,65 105,65 L105,105 L-5,105 Z"
+                    fill="rgba(61,165,217,0.1)" />
+                <path class="wave wave-5" d="M-5,70 C30,80 70,50 105,70 L105,105 L-5,105 Z"
+                    fill="rgba(0,180,216,0.12)" />
 
-    <!-- Sacred Filters -->
-    <svg width="0" height="0" class="absolute hidden">
+                <path class="wave wave-6" d="M-5,85 C20,75 50,95 80,85 C95,80 105,85 105,85 L105,105 L-5,105 Z"
+                    fill="rgba(126,200,227,0.08)" />
+            </g>
+        </svg>
+    </div>
+
+    <div class="sacred-grid" aria-hidden="true"></div>
+    <div id="ambient-overlay" aria-hidden="true"></div>
+    <div id="toast-container" aria-hidden="true"></div>
+
+    <svg width="0" height="0" class="hidden" aria-hidden="true">
         <defs>
             <filter id="crystal-refraction" x="-20%" y="-20%" width="140%" height="140%">
                 <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur" />
                 <feSpecularLighting in="blur" surfaceScale="5" specularConstant="1" specularExponent="20"
-                    lighting-color="#ffffff" result="spec">
+                    lighting-color="#fffbe6" result="spec">
                     <feDistantLight azimuth="45" elevation="45" />
                 </feSpecularLighting>
                 <feComposite in="spec" in2="SourceGraphic" operator="in" />
             </filter>
 
-            <filter id="silk-grain">
-                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch" />
-                <feColorMatrix type="saturate" values="0" />
-                <feComponentTransfer>
-                    <feFuncA type="linear" slope="0.05" />
-                </feComponentTransfer>
-                <feComposite operator="in" in2="SourceGraphic" />
-            </filter>
-
             <radialGradient id="sun-crystal-gradient">
-                <stop offset="0%" stop-color="#fff" />
+                <stop offset="0%" stop-color="#fffbe6" />
                 <stop offset="30%" stop-color="#fff5cc" />
-                <stop offset="60%" stop-color="#ffd700" />
-                <stop offset="100%" stop-color="#ffaa00" />
+                <stop offset="60%" stop-color="#ffd166" />
+                <stop offset="100%" stop-color="#e8b530" />
             </radialGradient>
 
-            <radialGradient id="menstrual-gradient">
-                <stop offset="0%" stop-color="#ff8080" />
-                <stop offset="100%" stop-color="#c44a4a" />
-            </radialGradient>
-            <radialGradient id="follicular-gradient">
-                <stop offset="0%" stop-color="#99e6ff" />
-                <stop offset="100%" stop-color="#4a9aaa" />
-            </radialGradient>
-            <radialGradient id="ovulatory-gradient">
-                <stop offset="0%" stop-color="#fffacd" />
-                <stop offset="100%" stop-color="#ffd700" />
-            </radialGradient>
-            <radialGradient id="luteal-gradient">
-                <stop offset="0%" stop-color="#a3c2ff" />
-                <stop offset="100%" stop-color="#4a8ace" />
+            <!-- Layer 4: outermost, ethereal -->
+            <radialGradient id="petal-layer4-gradient" cx="50%" cy="20%" r="80%">
+                <stop offset="0%" stop-color="rgba(255,240,200,0.35)" />
+                <stop offset="50%" stop-color="rgba(124,212,168,0.12)" />
+                <stop offset="100%" stop-color="rgba(184,169,212,0.06)" />
             </radialGradient>
 
+            <!-- Layer 3: large, warm -->
+            <radialGradient id="petal-layer3-gradient" cx="50%" cy="25%" r="75%">
+                <stop offset="0%" stop-color="rgba(255,245,205,0.50)" />
+                <stop offset="40%" stop-color="rgba(255,209,102,0.22)" />
+                <stop offset="100%" stop-color="rgba(232,131,124,0.08)" />
+            </radialGradient>
+
+            <!-- Outer ring: standard -->
             <radialGradient id="petal-aura-gradient" cx="50%" cy="30%" r="70%">
-                <stop offset="0%" stop-color="rgba(255,255,255,0.7)" />
-                <stop offset="100%" stop-color="rgba(255,215,0,0.4)" />
+                <stop offset="0%" stop-color="rgba(255,251,230,0.65)" />
+                <stop offset="100%" stop-color="rgba(255,209,102,0.30)" />
             </radialGradient>
 
+            <!-- Mid ring: warm glow -->
+            <radialGradient id="petal-mid-gradient" cx="50%" cy="30%" r="65%">
+                <stop offset="0%" stop-color="rgba(255,248,220,0.72)" />
+                <stop offset="50%" stop-color="rgba(232,197,71,0.35)" />
+                <stop offset="100%" stop-color="rgba(212,160,23,0.12)" />
+            </radialGradient>
         </defs>
     </svg>
 
-    <!-- Main App Engine -->
     <div id="app">
-
-        <!-- Header: The Title Sphere (Simplified - Space preserved) -->
-        <header>
-            <div
-                class="h-[1px] w-32 bg-gradient-to-r from-transparent via-[#ffd700] to-transparent mx-auto mt-12 opacity-20">
-            </div>
-            <p id="phase-subtitle">Daily Insights & Guidance</p>
+        <header class="app-header">
+            <div class="top-divider"></div>
+            <p id="phase-subtitle">Daily Insights &amp; Guidance</p>
         </header>
 
-        <!-- Main: The Living Mandala -->
-        <main>
-            <!-- Left Scroll: The Nourisher (Handle Removed) -->
-            <section id="scroll-nourishment" class="scroll-tab scroll-left" data-scroll="nourishment">
-                <div class="scroll-content">
-                    <button class="scroll-close-btn">&times;</button>
+        <main class="app-main">
+            <section id="scroll-nourishment" class="scroll-tab" data-scroll="nourishment" aria-hidden="true">
+                <div class="scroll-content" role="dialog" aria-modal="true" aria-label="Nourishment">
+                    <button class="scroll-close-btn" type="button" aria-label="Close nourishment">&times;</button>
                     <div class="scroll-inner-content">
                         <h3>Nourishment</h3>
                         <div id="nourishment-content"></div>
@@ -127,185 +110,174 @@
                 </div>
             </section>
 
-            <!-- Center Dial Area -->
-            <div class="lotus-container">
-                <svg id="lotus-dial" viewBox="0 0 400 400">
-                    <!-- Dynamic segments will be injected here by lotus-dial.js -->
-                    <g id="outer-petals-group" class="rotate-slow-cw"></g>
-                    <g id="mid-petals-group"></g>
-                    <g id="inner-petals-group"></g>
+            <section class="dial-stage">
+                <div class="lotus-container">
+                    <svg id="lotus-dial" viewBox="0 0 400 400" role="img" aria-label="Cycle dial">
+                        <g id="outer-petals-group"></g>
+                        <g id="mid-petals-group"></g>
+                        <g id="inner-petals-group"></g>
 
-                    <!-- The Crystal Sun Core -->
-                    <g id="sun-core-group" class="cursor-pointer">
-                        <circle id="sun-center" cx="200" cy="200" r="75" fill="url(#sun-crystal-gradient)"
-                            filter="url(#crystal-refraction)" />
+                        <g id="sun-core-group" tabindex="0" role="button" aria-label="Open daily log">
+                            <circle id="sun-center" cx="200" cy="200" r="75" fill="url(#sun-crystal-gradient)"
+                                filter="url(#crystal-refraction)" />
 
-                        <g id="sun-info-standard">
-                            <text x="200" y="160" text-anchor="middle"
-                                class="text-[8px] uppercase tracking-[0.4em] fill-white opacity-40 font-bold">
-                                <tspan x="200" dy="0">Cycle</tspan>
-                                <tspan x="200" dy="10">Day</tspan>
-                            </text>
-                            <text id="date-day" x="200" y="222" text-anchor="middle"
-                                class="text-7xl fill-[#ffd700] font-bold drop-shadow-[0_0_15px_rgba(255,215,0,0.4)]">01</text>
-                            <text id="date-phase" x="200" y="252" text-anchor="middle"
-                                class="text-[11px] uppercase tracking-[0.25em] fill-white/80 font-semibold">MENSTRUAL</text>
+                            <g id="sun-info-standard">
+                                <text x="200" y="160" text-anchor="middle" class="sun-label">Cycle</text>
+                                <text x="200" y="172" text-anchor="middle" class="sun-label">Day</text>
+                                <text id="date-day" x="200" y="222" text-anchor="middle" class="sun-day">01</text>
+                                <text id="date-phase" x="200" y="252" text-anchor="middle"
+                                    class="sun-phase">MENSTRUAL</text>
+                            </g>
+
+                            <g id="sun-info-insight" class="sun-insight-group" aria-hidden="true">
+                                <foreignObject x="122" y="255" width="156" height="64">
+                                    <div xmlns="http://www.w3.org/1999/xhtml" class="insight-wrap">
+                                        <p id="daily-insight-text">Loading insight...</p>
+                                    </div>
+                                </foreignObject>
+                            </g>
                         </g>
+                    </svg>
+                </div>
 
-                        <g id="sun-info-insight" class="opacity-0 pointer-events-none transition-opacity duration-300">
-                            <foreignObject x="155" y="155" width="90" height="90">
-                                <div xmlns="http://www.w3.org/1999/xhtml"
-                                    class="w-full h-full flex items-center justify-center text-center">
-                                    <p id="daily-insight-text"
-                                        class="text-[11px] font-serif italic text-[#4a2a0a] leading-tight drop-shadow-sm select-none p-2 rounded-full backdrop-blur-[2px] bg-gradient-radial from-white/40 to-transparent">
-                                        Loading insight...
-                                    </p>
-                                </div>
-                            </foreignObject>
-                        </g>
-                    </g>
-                </svg>
-            </div>
+                <div class="center-action-buttons">
+                    <button id="action-nourish" class="fast-action-btn nourish" type="button">
+                        <span class="btn-glow"></span>
+                        <span class="btn-icon" aria-hidden="true">🍃</span>
+                        <span class="btn-text">Nourish</span>
+                    </button>
+                    <button id="action-exercise" class="fast-action-btn exercise" type="button">
+                        <span class="btn-glow"></span>
+                        <span class="btn-icon" aria-hidden="true">🧘</span>
+                        <span class="btn-text">Asanas</span>
+                    </button>
+                </div>
+            </section>
 
-            <!-- Action Center Buttons -->
-            <div class="center-action-buttons w-full px-1 animate-fade-in-up" style="animation-delay: 800ms;">
-                <button id="action-nourish" class="fast-action-btn nourish" type="button">
-                    <span class="btn-glow"></span>
-                    <span class="btn-icon">🍃</span>
-                    <span class="btn-text">Nourish</span>
-                </button>
-                <button id="action-exercise" class="fast-action-btn exercise" type="button">
-                    <span class="btn-glow"></span>
-                    <span class="btn-icon">🧘</span>
-                    <span class="btn-text">Asanas</span>
-                </button>
-            </div>
-
-            <!-- Right Scroll: The Sadhana (Handle Removed) -->
-            <section id="scroll-asanas" class="scroll-tab scroll-right" data-scroll="asanas">
-                <div class="scroll-content">
-                    <button class="scroll-close-btn">&times;</button>
+            <section id="scroll-asanas" class="scroll-tab" data-scroll="asanas" aria-hidden="true">
+                <div class="scroll-content" role="dialog" aria-modal="true" aria-label="Asanas">
+                    <button class="scroll-close-btn" type="button" aria-label="Close asanas">&times;</button>
                     <div class="scroll-inner-content">
-                        <h3>Practice</h3>
+                        <h3>Asanas</h3>
                         <div id="asanas-content"></div>
                     </div>
                 </div>
             </section>
         </main>
 
-        <!-- Navigation: The Sacred Leaves -->
-        <nav id="nav-leaves">
+        <nav id="nav-leaves" aria-label="Primary">
             <button id="nav-history" class="nav-leaf" aria-label="History" type="button">
-                <svg viewBox="0 0 80 100">
-                    <!-- Leaf Body -->
-                    <path d="M40 5 Q10 30 10 60 Q10 95 40 95 Q70 95 70 60 Q70 30 40 5" fill="rgba(42, 106, 58, 0.4)"
-                        stroke="#d4af37" stroke-width="0.5" />
-                    <!-- Natural Veins -->
-                    <path d="M40 90 L40 15 
-                             M40 80 Q25 75 15 60
-                             M40 80 Q55 75 65 60
-                             M40 55 Q20 50 15 35
-                             M40 55 Q60 50 65 35
-                             M40 35 Q25 28 20 20" stroke="#d4af37" stroke-width="0.3" opacity="0.3" fill="none" />
+                <svg viewBox="0 0 80 100" aria-hidden="true">
+                    <path d="M40 5 Q10 30 10 60 Q10 95 40 95 Q70 95 70 60 Q70 30 40 5" fill="rgba(124,212,168,0.35)"
+                        stroke="#ffffff" stroke-width="0.8" />
+                    <path
+                        d="M40 90 L40 15 M40 80 Q25 75 15 60 M40 80 Q55 75 65 60 M40 55 Q20 50 15 35 M40 55 Q60 50 65 35"
+                        stroke="#ffffff" stroke-width="0.5" opacity="0.6" fill="none" />
                 </svg>
                 <span class="nav-label">History</span>
             </button>
 
-            <button id="nav-log" class="nav-leaf" aria-label="Log Ritual" type="button">
-                <div
-                    class="relative w-16 h-16 flex items-center justify-center filter drop-shadow-[0_0_15px_rgba(255,215,0,0.6)]">
-                    <svg viewBox="0 0 64 64" class="w-full h-full overflow-visible">
-                        <!-- Outer Glow Circle -->
-                        <circle cx="32" cy="32" r="28" fill="rgba(255,215,0,0.1)" stroke="#ffd700" stroke-width="1.5"
-                            stroke-dasharray="2 6" class="animate-spin-slow" />
-
-                        <!-- Sacred Lotus Icon -->
-                        <g fill="#ffd700" filter="drop-shadow(0 0 5px #ffd700)">
-                            <!-- Center Petal -->
-                            <path d="M32 48 C36 40 42 30 32 12 C22 30 28 40 32 48" />
-                            <!-- Left Petal -->
-                            <path d="M32 48 C20 45 10 38 12 28 C15 18 25 28 32 48" opacity="0.8" />
-                            <!-- Right Petal -->
-                            <path d="M32 48 C44 45 54 38 52 28 C49 18 39 28 32 48" opacity="0.8" />
-                            <!-- Lower Petals -->
-                            <path d="M32 48 C18 50 12 45 15 38 C18 32 25 40 32 48" opacity="0.6" />
-                            <path d="M32 48 C46 50 52 45 49 38 C46 32 39 40 32 48" opacity="0.6" />
+            <button id="nav-log" class="nav-leaf nav-core" aria-label="Log entry" type="button">
+                <span class="core-circle">
+                    <svg class="mini-lotus" viewBox="0 0 40 40" width="28" height="28" aria-hidden="true">
+                        <g transform="translate(20,20)">
+                            <g class="mini-lotus-spin">
+                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(232,131,124,0.7)" />
+                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(124,212,168,0.7)"
+                                    transform="rotate(60)" />
+                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(255,209,102,0.7)"
+                                    transform="rotate(120)" />
+                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(184,169,212,0.7)"
+                                    transform="rotate(180)" />
+                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(247,197,168,0.7)"
+                                    transform="rotate(240)" />
+                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(126,200,227,0.7)"
+                                    transform="rotate(300)" />
+                            </g>
+                            <circle cx="0" cy="0" r="3.5" fill="#e8b530" />
                         </g>
                     </svg>
-                </div>
-                <span class="nav-label">Log Entry</span>
+                </span>
+                <span class="nav-label">Log</span>
             </button>
 
             <button id="nav-rituals" class="nav-leaf" aria-label="Rituals" type="button">
-                <svg viewBox="0 0 80 100">
-                    <!-- Leaf Body -->
-                    <path d="M40 5 Q10 30 10 60 Q10 95 40 95 Q70 95 70 60 Q70 30 40 5" fill="rgba(26, 74, 90, 0.4)"
-                        stroke="#d4af37" stroke-width="0.5" />
-                    <!-- Natural Veins -->
-                    <path d="M40 90 L40 15 
-                             M40 80 Q25 75 15 60
-                             M40 80 Q55 75 65 60
-                             M40 55 Q20 50 15 35
-                             M40 55 Q60 50 65 35
-                             M40 35 Q25 28 20 20" stroke="#d4af37" stroke-width="0.3" opacity="0.3" fill="none" />
+                <svg viewBox="0 0 80 100" aria-hidden="true">
+                    <path d="M40 5 Q10 30 10 60 Q10 95 40 95 Q70 95 70 60 Q70 30 40 5" fill="rgba(184,169,212,0.35)"
+                        stroke="#ffffff" stroke-width="0.8" />
+                    <path
+                        d="M40 90 L40 15 M40 80 Q25 75 15 60 M40 80 Q55 75 65 60 M40 55 Q20 50 15 35 M40 55 Q60 50 65 35"
+                        stroke="#ffffff" stroke-width="0.5" opacity="0.6" fill="none" />
                 </svg>
                 <span class="nav-label">Rituals</span>
             </button>
         </nav>
-
     </div>
 
-    <!-- Modals -->
-    <div id="log-modal" class="modal hidden fixed inset-0 z-[200] flex items-center justify-center">
-        <div class="modal-backdrop absolute inset-0 bg-black/60"></div>
-        <div class="modal-content parchment-scroll relative z-10 w-[90vw] max-w-2xl max-h-[85vh] overflow-y-auto">
-            <button id="close-log-modal" class="modal-close"></button>
-            <h2
-                class="font-display text-4xl text-[#ffd700] mb-8 border-b border-white/10 pb-6 tracking-widest uppercase">
-                Daily Log</h2>
-            <div id="log-body" class="space-y-6"></div>
-            <button id="save-log"
-                class="w-full mt-10 py-5 text-xl text-[#faf4e4] hover:scale-[1.02] active:scale-95 transition-transform">Record
-                Entry</button>
+    <div id="log-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="log-title"
+        aria-hidden="true">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content parchment-scroll" tabindex="-1">
+            <button id="close-log-modal" class="modal-close" type="button" aria-label="Close log"></button>
+            <h2 id="log-title">Daily Log</h2>
+            <div id="log-body"></div>
+            <button id="save-log" type="button" class="primary-btn">Record Entry</button>
         </div>
     </div>
 
-    <!-- History Modal -->
-    <div id="history-modal" class="modal hidden fixed inset-0 z-[200] flex items-center justify-center">
-        <div class="modal-backdrop absolute inset-0 bg-black/60"></div>
-        <div class="modal-content parchment-scroll relative z-10 w-[90vw] max-w-2xl max-h-[85vh] overflow-y-auto">
-            <button id="close-history-modal" class="modal-close"></button>
-            <h2
-                class="font-display text-4xl text-[#ffd700] mb-8 border-b border-white/10 pb-6 tracking-widest uppercase">
-                History</h2>
-            <div id="history-body" class="space-y-6"></div>
+    <div id="history-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="history-title"
+        aria-hidden="true">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content parchment-scroll" tabindex="-1">
+            <button id="close-history-modal" class="modal-close" type="button" aria-label="Close history"></button>
+            <h2 id="history-title">History &amp; Insights</h2>
+            <div class="data-actions">
+                <button id="export-json" type="button" class="ghost-btn">Export JSON</button>
+                <button id="export-csv" type="button" class="ghost-btn">Export CSV</button>
+                <button id="import-data" type="button" class="ghost-btn">Import</button>
+                <button id="reset-data" type="button" class="ghost-btn danger">Reset</button>
+                <input id="import-file" type="file" accept="application/json,.csv" class="hidden-input">
+            </div>
+            <div id="history-body"></div>
+            <div class="settings-section">
+                <h3
+                    style="font-family: 'Cormorant Garamond', serif; color: #8B6914; font-size: 1.3rem; margin-bottom: 0.6rem;">
+                    ⚙️ Cycle Settings</h3>
+                <div class="settings-grid" id="settings-grid"></div>
+                <button id="save-settings" type="button" class="primary-btn"
+                    style="background: linear-gradient(135deg, #e8c547, #d4a017);">Save Settings</button>
+            </div>
         </div>
     </div>
 
-    <!-- Rituals Modal -->
-    <div id="scroll-rituals" class="modal hidden fixed inset-0 z-[200] flex items-center justify-center">
-        <div class="modal-backdrop absolute inset-0 bg-black/60"></div>
-        <div class="modal-content parchment-scroll relative z-10 w-[90vw] max-w-2xl max-h-[85vh] overflow-y-auto">
-            <button id="close-rituals-modal" class="modal-close"></button>
-            <h2
-                class="font-display text-4xl text-[#ffd700] mb-8 border-b border-white/10 pb-6 tracking-widest uppercase">
-                Self-Care</h2>
-            <div id="rituals-content" class="space-y-6"></div>
+    <div id="scroll-rituals" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="rituals-title"
+        aria-hidden="true">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content parchment-scroll" tabindex="-1">
+            <button id="close-rituals-modal" class="modal-close" type="button" aria-label="Close rituals"></button>
+            <h2 id="rituals-title">Self-Care Rituals</h2>
+            <div id="rituals-content"></div>
         </div>
     </div>
 
-    <!-- Core Engine Scripts -->
     <script src="https://unpkg.com/zustand@4.4.7/umd/zustand.production.js"></script>
     <script src="https://unpkg.com/dexie@3.2.4/dist/dexie.js"></script>
     <script src="data.js"></script>
     <script src="store.js"></script>
-    <script src="river-engine.js"></script>
+    <script src="toast.js"></script>
     <script src="lotus-dial.js"></script>
     <script src="scroll-system.js"></script>
     <script src="modals.js"></script>
     <script src="premium-effects.js"></script>
     <script src="app.js"></script>
 
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(() => { });
+            });
+        }
+    </script>
 </body>
 
 </html>

@@ -1,99 +1,27 @@
-/* LotusCycle Aura 2.0 - Premium Interaction & Visual Polish */
+/* Premium motion + micro-polish — Happy Garden Theme */
 
-/* --- Advanced Animations --- */
+@keyframes refraction-shift {
+
+    0%,
+    100% {
+        filter: hue-rotate(0deg) brightness(1);
+    }
+
+    50% {
+        filter: hue-rotate(8deg) brightness(1.05);
+    }
+}
 
 @keyframes pulse-sacred {
 
     0%,
     100% {
         transform: scale(1);
-        filter: brightness(1);
     }
 
     50% {
         transform: scale(1.02);
-        filter: brightness(1.2);
     }
-}
-
-@keyframes float-ethereal {
-
-    0%,
-    100% {
-        transform: translateY(0) rotate(0);
-    }
-
-    50% {
-        transform: translateY(-10px) rotate(2deg);
-    }
-}
-
-@keyframes refraction-shift {
-    0% {
-        filter: hue-rotate(0deg) brightness(1);
-    }
-
-    50% {
-        filter: hue-rotate(10deg) brightness(1.1);
-    }
-
-    100% {
-        filter: hue-rotate(0deg) brightness(1);
-    }
-}
-
-/* --- Crystal Sun Effects --- */
-
-#sun-core-group {
-    animation: refraction-shift 8s ease-in-out infinite;
-    will-change: filter;
-}
-
-#sun-center {
-    transition: r 0.6s var(--ease-out-expo);
-    will-change: r;
-}
-
-#sun-core-group:hover #sun-center {
-    animation: pulse-sacred 2s ease-in-out infinite;
-}
-
-/* --- Scroll Interaction Polish --- */
-
-.scroll-tab.open .scroll-handle {
-    border-color: var(--gold-shimmer);
-    box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
-}
-
-.scroll-inner-content::-webkit-scrollbar {
-    width: 4px;
-}
-
-.scroll-inner-content::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.scroll-inner-content::-webkit-scrollbar-thumb {
-    background: rgba(212, 175, 55, 0.3);
-    border-radius: 10px;
-}
-
-/* --- Silk Texture Overlays --- */
-
-.scroll-content::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: url('https://www.transparenttextures.com/patterns/silk.png');
-    opacity: 0.1;
-    pointer-events: none;
-}
-
-/* --- Navigation Leaf Polish --- */
-
-.nav-leaf:hover svg {
-    transform: scale(1.05) rotate(2deg);
-    filter: drop-shadow(0 10px 25px rgba(255, 215, 0, 0.5));
 }
 
 @keyframes spin-slow {
@@ -106,63 +34,243 @@
     }
 }
 
+@keyframes bounceIn {
+    0% {
+        opacity: 0.2;
+        filter: blur(1px);
+    }
+
+    65% {
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    100% {
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+@keyframes bounceOut {
+    0% {
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    100% {
+        opacity: 0;
+        filter: blur(1px);
+    }
+}
+
+@keyframes float-particle {
+    0% {
+        transform: translate3d(0, 0, 0) scale(0.75);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: translate3d(calc(var(--drift, 0) * 50px), -230px, 0) scale(0.2);
+        opacity: 0;
+    }
+}
+
+/* Mini lotus spin on Log button */
+@keyframes miniLotusSpin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Wind sway for petal layers */
+@keyframes windSway {
+
+    0%,
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+
+    25% {
+        transform: rotate(1.2deg) scale(1.005);
+    }
+
+    50% {
+        transform: rotate(-0.5deg) scale(1.008);
+    }
+
+    75% {
+        transform: rotate(0.8deg) scale(1.003);
+    }
+}
+
+/* Floating leaf animations */
+@keyframes driftRight {
+    0% {
+        transform: translate(0, 0) rotate(var(--leaf-start-rotation, 0deg));
+        opacity: 0;
+    }
+
+    8% {
+        opacity: 0.65;
+    }
+
+    80% {
+        opacity: 0.55;
+    }
+
+    100% {
+        transform: translate(calc(100vw + 60px), 80px) rotate(calc(var(--leaf-start-rotation, 0deg) + 540deg));
+        opacity: 0;
+    }
+}
+
+@keyframes driftLeft {
+    0% {
+        transform: translate(0, 0) rotate(var(--leaf-start-rotation, 0deg));
+        opacity: 0;
+    }
+
+    8% {
+        opacity: 0.65;
+    }
+
+    80% {
+        opacity: 0.55;
+    }
+
+    100% {
+        transform: translate(calc(-100vw - 60px), 80px) rotate(calc(var(--leaf-start-rotation, 0deg) - 480deg));
+        opacity: 0;
+    }
+}
+
+@keyframes driftDown {
+    0% {
+        transform: translate(0, 0) rotate(var(--leaf-start-rotation, 0deg));
+        opacity: 0;
+    }
+
+    8% {
+        opacity: 0.65;
+    }
+
+    80% {
+        opacity: 0.55;
+    }
+
+    100% {
+        transform: translate(60px, calc(100vh + 60px)) rotate(calc(var(--leaf-start-rotation, 0deg) + 420deg));
+        opacity: 0;
+    }
+}
+
+/* --- Applied styles --- */
+
+#sun-core-group {
+    animation: refraction-shift 8s ease-in-out infinite;
+}
+
+#sun-core-group:hover #sun-center {
+    animation: pulse-sacred 2s ease-in-out infinite;
+}
+
 .animate-spin-slow {
     animation: spin-slow 12s linear infinite;
     transform-origin: center;
 }
 
-/* --- Sacred Spark Particles --- */
+/* Mini lotus on Log button */
+.mini-lotus-spin {
+    animation: miniLotusSpin 12s linear infinite;
+    transform-origin: 0px 0px;
+}
 
-.sacred-spark {
+.core-circle .mini-lotus {
+    display: block;
+}
+
+/* Floating particles */
+.floating-particle {
     position: absolute;
-    width: 2px;
-    height: 2px;
-    background: var(--gold-shimmer);
-    border-radius: 50%;
+    width: 5px;
+    height: 5px;
+    border-radius: 999px;
     pointer-events: none;
-    opacity: 0;
-    box-shadow: 0 0 10px var(--gold-shimmer);
+    background: radial-gradient(circle at center, rgba(124, 212, 168, 0.80), rgba(255, 209, 102, 0));
+    box-shadow: 0 0 10px rgba(124, 212, 168, 0.30);
+    animation: float-particle 7.5s ease-out forwards;
 }
 
-/* --- Dynamic Overlap Prevention --- */
+/* Floating leaves */
+.floating-leaf {
+    position: absolute;
+    pointer-events: none;
+    z-index: 5;
+    width: var(--leaf-size, 18px);
+    height: var(--leaf-size, 18px);
+}
 
-@media (max-width: 1024px) {
-    .scroll-handle {
-        width: 50px;
-        height: 140px;
+.floating-leaf::before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Leaf shape 1: simple oval leaf */
+.leaf-1::before {
+    background: radial-gradient(ellipse at 30% 40%, rgba(124, 212, 168, 0.55), rgba(90, 184, 138, 0.20));
+    border-radius: 0 70% 0 70%;
+    border: 0.5px solid rgba(90, 184, 138, 0.30);
+}
+
+/* Leaf shape 2: golden leaf */
+.leaf-2::before {
+    background: radial-gradient(ellipse at 40% 30%, rgba(255, 209, 102, 0.50), rgba(232, 181, 48, 0.15));
+    border-radius: 70% 0 70% 0;
+    border: 0.5px solid rgba(232, 181, 48, 0.30);
+}
+
+/* Leaf shape 3: coral petal */
+.leaf-3::before {
+    background: radial-gradient(ellipse at 50% 30%, rgba(232, 131, 124, 0.45), rgba(212, 107, 100, 0.12));
+    border-radius: 50% 0 50% 0;
+    border: 0.5px solid rgba(232, 131, 124, 0.25);
+}
+
+.drift-right {
+    animation: driftRight 11s ease-in-out forwards;
+}
+
+.drift-left {
+    animation: driftLeft 11s ease-in-out forwards;
+}
+
+.drift-down {
+    animation: driftDown 10s ease-in-out forwards;
+}
+
+body.keyboard-nav :focus-visible {
+    outline: 2px solid rgba(212, 160, 23, 0.55);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .floating-particle,
+    .floating-leaf {
+        display: none;
     }
-}
 
-@media (max-height: 700px) {
-    .lotus-container {
-        transform: translateY(-20px);
+    .mini-lotus-spin {
+        animation: none;
     }
-}
-
-/* --- Fade In System --- */
-
-.fade-in-up {
-    animation: fadeInUp 1s var(--ease-out-expo) forwards;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* --- Writing Mode Helpers --- */
-.writing-vertical {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    text-transform: uppercase;
-    letter-spacing: 0.3em;
-    font-size: 0.7rem;
-    font-weight: 300;
 }

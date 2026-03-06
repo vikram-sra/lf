@@ -75,15 +75,15 @@ class RiverEngine {
         this.causticTime = 0;
         this.mistTime = 0;
         this.lastHeartbeat = 0;
-
-        this.initParticles(30);
+        this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         this.perlin = new Perlin();
+        // Deep aquatic phase colors for the pond background
         this.phaseColors = {
-            menstrual: { deep: '#1a0505', flow: '#2d0a0a', shimmer: '#d65c5c', caustic: 'rgba(255, 100, 100, 0.2)' },
-            follicular: { deep: '#0a1a1a', flow: '#163333', shimmer: '#5ebccf', caustic: 'rgba(94, 188, 207, 0.2)' },
-            ovulatory: { deep: '#1a1205', flow: '#36240a', shimmer: '#ffea00', caustic: 'rgba(255, 234, 0, 0.25)' },
-            luteal: { deep: '#050a1a', flow: '#0f1e3d', shimmer: '#6ca0e0', caustic: 'rgba(108, 160, 224, 0.2)' }
+            menstrual: { deep: '#07151f', flow: '#0f293d', shimmer: '#ff7e67', caustic: 'rgba(255,126,103,0.18)' },
+            follicular: { deep: '#061a1f', flow: '#0e3b48', shimmer: '#00d084', caustic: 'rgba(0,208,132,0.18)' },
+            ovulatory: { deep: '#121815', flow: '#22382c', shimmer: '#ffb703', caustic: 'rgba(255,183,3,0.15)' },
+            luteal: { deep: '#0b1122', flow: '#1a2444', shimmer: '#b088f9', caustic: 'rgba(176,136,249,0.15)' }
         };
 
         this.currentPhase = 'menstrual';
@@ -95,7 +95,9 @@ class RiverEngine {
         window.addEventListener('resize', () => this.resize());
 
         // Listen for mouse/touch for ripples
-        window.addEventListener('mousemove', (e) => this.createRipple(e.clientX, e.clientY, 0.3));
+        if (!this.reducedMotion) {
+            window.addEventListener('mousemove', (e) => this.createRipple(e.clientX, e.clientY, 0.2), { passive: true });
+        }
         window.addEventListener('mousedown', (e) => this.createRipple(e.clientX, e.clientY, 1.0));
         window.addEventListener('touchstart', (e) => {
             const touch = e.touches[0];
@@ -125,8 +127,8 @@ class RiverEngine {
     createRipple(x, y, strength) {
         this.ripples.push({
             x, y, r: 0,
-            opacity: strength * 0.6,
-            velocity: 2.5 + strength * 1.5,
+            opacity: strength * 0.8,
+            velocity: 2.5 + strength * 2.0,
             life: 1.0
         });
     }
@@ -137,119 +139,80 @@ class RiverEngine {
         // Throttling to ~30fps for CPU relief
         if (!this.lastFrameTime) this.lastFrameTime = now;
         const delta = now - this.lastFrameTime;
-        if (delta < 32) {
+        const minFrame = this.reducedMotion ? 48 : 32;
+        if (delta < minFrame) {
             requestAnimationFrame(() => this.animate());
             return;
         }
         this.lastFrameTime = now;
 
-        this.time += 0.003;
-        this.causticTime += 0.001;
-        this.mistTime += 0.002;
+        this.time += 0.005;
+        this.causticTime += 0.002;
+        this.mistTime += 0.001;
 
-        // Sacred Heartbeat - periodic ripple from center
-        if (now - this.lastHeartbeat > 7000) {
-            this.createRipple(this.width / 2, this.height / 2, 0.4);
-            this.lastHeartbeat = now;
+        if (!this.reducedMotion) {
+            this.updatePhase();
+            this.drawRiver();
+            this.drawMist();
+        } else {
+            this.drawStaticBackground();
         }
 
-        this.drawRiver();
-        this.drawCaustics();
-        this.drawMist();
-        this.drawParticles();
         requestAnimationFrame(() => this.animate());
     }
 
-    initParticles(count) {
-        // Reduced particle count for performance
-        const pCount = 15;
-        for (let i = 0; i < pCount; i++) {
-            this.particles.push({
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
-                vx: (Math.random() - 0.5) * 0.2,
-                vy: (Math.random() - 0.5) * 0.2,
-                size: Math.random() * 1.5 + 0.5,
-                alpha: Math.random() * 0.2 + 0.05,
-                phase: Math.random() * Math.PI * 2
-            });
-        }
-    }
-
-    drawParticles() {
-        this.ctx.save();
-        this.particles.forEach(p => {
-            p.x += p.vx + Math.sin(this.time + p.phase) * 0.15;
-            p.y += p.vy + Math.cos(this.time + p.phase) * 0.15;
-
-            // Wrap around
-            if (p.x < 0) p.x = this.width;
-            if (p.x > this.width) p.x = 0;
-            if (p.y < 0) p.y = this.height;
-            if (p.y > this.height) p.y = 0;
-
-            const glow = this.ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 6);
-            const flicker = (Math.sin(this.time * 2 + p.phase) * 0.3 + 0.7) * p.alpha;
-
-            glow.addColorStop(0, `hsla(45, 100%, 70%, ${flicker})`);
-            glow.addColorStop(0.3, `hsla(45, 100%, 50%, ${flicker * 0.6})`);
-            glow.addColorStop(1, 'transparent');
-
-            this.ctx.fillStyle = glow;
-            this.ctx.beginPath();
-            this.ctx.arc(p.x, p.y, p.size * 6, 0, Math.PI * 2);
-            this.ctx.fill();
-
-            // Core spark
-            this.ctx.fillStyle = `rgba(255, 255, 200, ${flicker * 0.8})`;
-            this.ctx.beginPath();
-            this.ctx.arc(p.x, p.y, p.size * 0.4, 0, Math.PI * 2);
-            this.ctx.fill();
-        });
-        this.ctx.restore();
+    drawStaticBackground() {
+        const colors = this.phaseColors[this.currentPhase];
+        let grad = this.ctx.createRadialGradient(this.width / 2, this.height / 2, 0, this.width / 2, this.height / 2, this.width);
+        grad.addColorStop(0, colors.flow);
+        grad.addColorStop(1, colors.deep);
+        this.ctx.fillStyle = grad;
+        this.ctx.fillRect(0, 0, this.width, this.height);
     }
 
     drawRiver() {
         const colors = this.phaseColors[this.currentPhase];
 
-        // Deep Water Base
-        this.ctx.fillStyle = colors.deep;
+        // 1. Deep Water Base Gradient
+        let bgGrad = this.ctx.createRadialGradient(this.width / 2, this.height * 0.4, 0, this.width / 2, this.height * 0.4, this.width * 0.8);
+        bgGrad.addColorStop(0, colors.flow);
+        bgGrad.addColorStop(1, colors.deep);
+        this.ctx.fillStyle = bgGrad;
         this.ctx.fillRect(0, 0, this.width, this.height);
 
-        // Silky liquid oil surface using sine-wave superposition
-        this.drawSilkySurface(colors);
-
-        // Draw Ripples with larger spread
-        this.updateRipples();
-    }
-
-    drawSilkySurface(colors) {
+        // 2. Aerial Pond Caustics (Voronoi-ish overlapping shapes)
         this.ctx.save();
-        // Increased step size for fewer draw calls
-        const step = 150;
+        this.ctx.globalCompositeOperation = 'screen';
+        const step = 200;
         for (let x = -step; x < this.width + step; x += step) {
             for (let y = -step; y < this.height + step; y += step) {
-                const wave1 = Math.sin(x * 0.0015 + this.time * 0.3) * 0.5;
-                const wave2 = Math.sin(y * 0.0025 + this.time * 0.25) * 0.5;
-                const combined = (wave1 + wave2) / 2;
-                const normalized = (combined + 1) / 2;
+                // Multi-layered sine interference for organic caustics
+                const cx = x + Math.sin(this.causticTime * 2 + y * 0.005) * 60;
+                const cy = y + Math.cos(this.causticTime * 1.5 + x * 0.004) * 60;
 
-                if (normalized > 0.5) {
-                    const size = step * normalized * 1.8;
-                    const alpha = normalized * 0.1;
+                const wave1 = Math.sin(cx * 0.006 - this.time);
+                const wave2 = Math.cos(cy * 0.005 + this.time * 0.8);
+                const noise = (wave1 * wave2 + 1) / 2; // 0 to 1
 
-                    const gradient = this.ctx.createRadialGradient(x, y, 0, x, y, size);
-                    gradient.addColorStop(0, colors.shimmer + '14');
-                    gradient.addColorStop(1, 'transparent');
+                if (noise > 0.45) {
+                    const intensity = Math.pow((noise - 0.45) * 1.8, 2);
+                    const size = step * 0.8 * intensity;
 
-                    this.ctx.fillStyle = gradient;
+                    const grad = this.ctx.createRadialGradient(cx, cy, 0, cx, cy, size);
+                    grad.addColorStop(0, colors.caustic);
+                    grad.addColorStop(1, 'transparent');
+
+                    this.ctx.fillStyle = grad;
                     this.ctx.beginPath();
-                    this.ctx.arc(x, y, size, 0, Math.PI * 2);
+                    this.ctx.arc(cx, cy, size, 0, Math.PI * 2);
                     this.ctx.fill();
                 }
             }
         }
         this.ctx.restore();
+
+        // 3. User Ripples
+        this.updateRipples();
     }
 
     hexToRgb(hex) {
@@ -349,5 +312,4 @@ class RiverEngine {
         }
     }
 }
-
 

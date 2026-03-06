@@ -1,0 +1,17 @@
+{
+    "name": "LotusCycle Aura",
+    "short_name": "LotusCycle",
+    "description": "A premium menstrual cycle tracker with phase-based wellness guidance.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#fef9f2",
+    "theme_color": "#fef9f2",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23ffd166'/><text x='50' y='62' font-size='42' text-anchor='middle' fill='%238B6914'>✦</text></svg>",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ]
+}
