@@ -1,5 +1,5 @@
 /**
- * LotusCycle Aura - Modal controller
+ * Lady Friend - Modal controller
  * Features: log, history, rituals, settings, CSV import/export, delete entries
  */
 
@@ -256,7 +256,10 @@ class ModalController {
         const today = new Date();
         const daysUntilPeriod = Math.max(0, Math.ceil((predictions.nextPeriodStart - today) / (1000 * 60 * 60 * 24)));
 
+        const calendarHtml = this.renderCalendarHtml(predictions, logs);
+
         const statsHtml = `
+            ${calendarHtml}
             <div class="stats-grid">
                 <article class="stat-card"><p class="stat-label">Next Period</p><p class="stat-value">${this.formatDate(predictions.nextPeriodStart)}</p></article>
                 <article class="stat-card"><p class="stat-label">Days Until</p><p class="stat-value">${daysUntilPeriod} day${daysUntilPeriod !== 1 ? 's' : ''}</p></article>
@@ -385,7 +388,7 @@ class ModalController {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `lotuscycle-export-${new Date().toISOString().slice(0, 10)}.json`;
+            link.download = `lady-friend-export-${new Date().toISOString().slice(0, 10)}.json`;
             link.click();
             URL.revokeObjectURL(url);
             showToast('JSON exported successfully', 'success');
@@ -422,7 +425,7 @@ class ModalController {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `lotuscycle-export-${new Date().toISOString().slice(0, 10)}.csv`;
+            link.download = `lady-friend-export-${new Date().toISOString().slice(0, 10)}.csv`;
             link.click();
             URL.revokeObjectURL(url);
             showToast('CSV exported successfully', 'success');
@@ -552,8 +555,49 @@ class ModalController {
             Sacred: '🕯️',
             Neutral: '✨'
         };
-
         return map[mood] || '✨';
+    }
+
+    renderCalendarHtml(predictions, logs) {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = today.getMonth();
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        const pStart = new Date(predictions.nextPeriodStart); pStart.setHours(0,0,0,0);
+        const pEnd = new Date(predictions.nextPeriodEnd); pEnd.setHours(23,59,59,999);
+        const fStart = new Date(predictions.fertileStart); fStart.setHours(0,0,0,0);
+        const fEnd = new Date(predictions.fertileEnd); fEnd.setHours(23,59,59,999);
+        const logsMap = new Set(logs.map(l => l.date));
+
+        let html = `<div class="calendar-wrapper"><h3 class="cal-title">${today.toLocaleString('default', { month: 'long', year: 'numeric' })}</h3><div class="calendar-grid">`;
+        ['S','M','T','W','T','F','S'].forEach(d => html += `<div class="cal-header">${d}</div>`);
+        
+        for (let i = 0; i < firstDay; i++) html += `<div class="cal-day empty"></div>`;
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(year, month, day);
+            // Timezone safe ISO
+            const dateStr = [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-');
+            const isLogged = logsMap.has(dateStr);
+            const isToday = day === today.getDate();
+            
+            let classes = ['cal-day'];
+            if (isToday) classes.push('today');
+            if (isLogged) classes.push('logged');
+            if (date >= pStart && date <= pEnd) classes.push('predicted-period');
+            else if (date >= fStart && date <= fEnd) classes.push('predicted-fertile');
+
+            html += `<div class="${classes.join(' ')}">${day}</div>`;
+        }
+        
+        html += `</div><div class="cal-legend">
+                <span><div class="cal-dot peri"></div> Period</span>
+                <span><div class="cal-dot fert"></div> Fertile</span>
+                <span><div class="cal-dot log"></div> Logged</span>
+            </div></div>`;
+        return html;
     }
 }
 

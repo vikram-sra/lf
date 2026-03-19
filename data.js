@@ -1,5 +1,5 @@
 /**
- * LotusCycle Aura - Content Data Engine (Indian Context)
+ * Lady Friend - Content Data Engine (Indian Context)
  * Phase-based recommendations for nourishment, movement, and symptom predictions
  */
 

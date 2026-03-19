@@ -1,5 +1,5 @@
 /**
- * LotusCycle Aura v3 - Hyper-Realistic River Engine
+ * Lady Friend v3 - Hyper-Realistic River Engine
  * Implements sine-wave superposition for silky liquid oil look with caustic light layers.
  */
 

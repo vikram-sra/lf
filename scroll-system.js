@@ -1,5 +1,5 @@
 /**
- * LotusCycle Aura - Side panel controller
+ * Lady Friend - Side panel controller
  */
 
 class ParchmentScrolls {

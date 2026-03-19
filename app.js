@@ -1,8 +1,8 @@
 /**
- * LotusCycle Aura - Application controller
+ * Lady Friend - Application controller
  */
 
-class LotusCycleApp {
+class LadyFriendApp {
     constructor() {
         this.enginesInitialized = false;
         this.subscriptionsBound = false;
@@ -176,5 +176,5 @@ class LotusCycleApp {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    window.lotusApp = new LotusCycleApp();
+    window.ladyFriendApp = new LadyFriendApp();
 });

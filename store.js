@@ -1,8 +1,8 @@
 /**
- * LotusCycle Aura - State + persistence
+ * Lady Friend - State + persistence
  */
 
-const db = new Dexie('LotusCycleDB');
+const db = new Dexie('LadyFriendDB');
 db.version(1).stores({
     settings: 'id',
     logs: 'date',

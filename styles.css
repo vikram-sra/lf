@@ -63,6 +63,9 @@ body.scroll-mode-active {
     z-index: -2;
     background: radial-gradient(circle at 50% 50%, var(--bg-shallow) 0%, var(--bg-deep) 100%);
     overflow: hidden;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
 }
 
 .water-svg {
@@ -517,9 +520,35 @@ body.scroll-mode-active {
         -14px 0 4px -4px rgba(0, 0, 0, 0.4),
         14px 0 4px -4px rgba(0, 0, 0, 0.4);
 
+
     overflow: hidden;
     transition: transform 0.4s var(--ease-out-expo), opacity 0.4s var(--ease-out-expo), width 0.4s var(--ease-out-expo), height 0.4s var(--ease-out-expo);
     z-index: 40;
+    will-change: transform, opacity, width, height;
+    transform: translate(-50%, -50%) scale(0.94) translateZ(0);
+    backface-visibility: hidden;
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.94) translateZ(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) translateZ(0);
+    }
+}
+
+@keyframes bounceOut {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) translateZ(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.94) translateZ(0);
+    }
 }
 
 .scroll-tab.open {
@@ -530,7 +559,7 @@ body.scroll-mode-active {
     /* Unroll animation effect */
     width: min(470px, 92vw);
     height: min(76dvh, 740px);
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, -50%) scale(1) translateZ(0);
     opacity: 1;
     pointer-events: auto;
 }
@@ -602,6 +631,9 @@ body.scroll-mode-active {
     inset: 0;
     background: rgba(254, 249, 242, 0.55);
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .parchment-scroll {
@@ -630,6 +662,8 @@ body.scroll-mode-active {
     padding: 2.8rem 2.2rem;
     z-index: 1;
     color: #3b2a1a;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .parchment-scroll h2 {
@@ -696,9 +730,10 @@ body.scroll-mode-active {
 
 .ghost-btn {
     padding: 0.62rem 0.8rem;
-    color: var(--text-main);
-    background: rgba(255, 255, 255, 0.5);
-    border: 1px solid rgba(180, 140, 60, 0.22);
+    color: #8B6914;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(180, 140, 60, 0.35);
     font-size: 0.72rem;
 }
 
@@ -865,14 +900,16 @@ body.scroll-mode-active {
     font-size: 0.58rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    opacity: 0.55;
+    color: #8B6914;
+    opacity: 0.8;
     margin-bottom: 0.2rem;
+    font-weight: 600;
 }
 
 .stat-value {
     font-size: 0.93rem;
     color: #8B6914;
-    font-weight: 500;
+    font-weight: 700;
 }
 
 .history-list {
@@ -959,6 +996,8 @@ body.scroll-mode-active {
     border-radius: 14px;
     padding: 0.72rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: #4a3620;
+    font-weight: 500;
 }
 
 .panel-card h4 {
@@ -970,7 +1009,8 @@ body.scroll-mode-active {
 .panel-card p {
     font-size: 0.9rem;
     line-height: 1.5;
-    color: var(--text-main);
+    color: #4a3620;
+    font-weight: 500;
 }
 
 .panel-highlight {
@@ -989,6 +1029,103 @@ body.scroll-mode-active {
     color: #4a3620;
     margin-bottom: 0.5rem;
 }
+
+/* --- Monthly Calendar --- */
+.calendar-wrapper {
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(180, 140, 60, 0.22);
+}
+
+.cal-title {
+    font-family: 'Cormorant Garamond', serif;
+    color: #8B6914;
+    text-align: center;
+    margin-bottom: 0.6rem;
+    font-size: 1.1rem;
+    text-transform: capitalize;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    text-align: center;
+}
+
+.cal-header {
+    font-size: 0.6rem;
+    color: #8B6914;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: #4a3620;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+    border: 1px solid rgba(180, 140, 60, 0.1);
+}
+
+.cal-day.empty {
+    background: transparent;
+    border: none;
+}
+
+.cal-day.today {
+    font-weight: 800;
+    box-shadow: inset 0 0 0 1px #8B6914;
+}
+
+.cal-day.predicted-period {
+    background: rgba(232, 131, 124, 0.25);
+    border-color: rgba(232, 131, 124, 0.5);
+    color: #b5403a;
+}
+
+.cal-day.predicted-fertile {
+    background: rgba(124, 212, 168, 0.25);
+    border-color: rgba(124, 212, 168, 0.5);
+    color: #2e7a50;
+}
+
+.cal-day.logged {
+    background: #e8c547;
+    color: #4a3620;
+    font-weight: bold;
+}
+
+.cal-legend {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-top: 0.8rem;
+    font-size: 0.6rem;
+    color: #8B6914;
+    text-transform: uppercase;
+}
+
+.cal-legend span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.cal-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+.cal-dot.peri { background: rgba(232, 131, 124, 0.5); }
+.cal-dot.fert { background: rgba(124, 212, 168, 0.5); }
+.cal-dot.log { background: #e8c547; }
 
 /* --- Settings --- */
 

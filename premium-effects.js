@@ -1,5 +1,5 @@
 /**
- * LotusCycle Aura - Premium effects: floating leaves, particles, keyboard state
+ * Lady Friend - Premium effects: floating leaves, particles, keyboard state
  */
 
 class PremiumEffects {

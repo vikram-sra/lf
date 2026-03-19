@@ -1,5 +1,5 @@
 /**
- * LotusCycle Aura - Toast Notification System
+ * Lady Friend - Toast Notification System
  */
 
 const ToastManager = (() => {

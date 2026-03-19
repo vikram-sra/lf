@@ -1,8 +1,8 @@
 /**
- * LotusCycle Aura - Service Worker (Cache-First)
+ * Lady Friend - Service Worker (Cache-First)
  */
 
-const CACHE_NAME = 'lotuscycle-v1';
+const CACHE_NAME = 'lady-friend-v1';
 const ASSETS = [
     '/',
     '/index.html',

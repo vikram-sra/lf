@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>LotusCycle Aura | Cycle Tracker</title>
+    <title>Lady Friend | Cycle Tracker</title>
     <meta name="description" content="A premium, biophilic menstrual cycle tracker.">
     <meta name="theme-color" content="#fef9f2">
     <link rel="manifest" href="manifest.json">
@@ -46,7 +46,7 @@
     <div id="ambient-overlay" aria-hidden="true"></div>
     <div id="toast-container" aria-hidden="true"></div>
 
-    <svg width="0" height="0" class="hidden" aria-hidden="true">
+    <svg width="0" height="0" aria-hidden="true" style="position: absolute; pointer-events: none;">
         <defs>
             <filter id="crystal-refraction" x="-20%" y="-20%" width="140%" height="140%">
                 <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur" />
@@ -54,7 +54,11 @@
                     lighting-color="#fffbe6" result="spec">
                     <feDistantLight azimuth="45" elevation="45" />
                 </feSpecularLighting>
-                <feComposite in="spec" in2="SourceGraphic" operator="in" />
+                <feComposite in="spec" in2="SourceAlpha" operator="in" result="lit" />
+                <feMerge>
+                    <feMergeNode in="SourceGraphic" />
+                    <feMergeNode in="lit" />
+                </feMerge>
             </filter>
 
             <radialGradient id="sun-crystal-gradient">
@@ -118,15 +122,14 @@
                         <g id="inner-petals-group"></g>
 
                         <g id="sun-core-group" tabindex="0" role="button" aria-label="Open daily log">
-                            <circle id="sun-center" cx="200" cy="200" r="75" fill="url(#sun-crystal-gradient)"
+                            <circle id="sun-center" cx="200" cy="200" r="82" fill="url(#sun-crystal-gradient)"
                                 filter="url(#crystal-refraction)" />
 
                             <g id="sun-info-standard">
-                                <text x="200" y="160" text-anchor="middle" class="sun-label">Cycle</text>
-                                <text x="200" y="172" text-anchor="middle" class="sun-label">Day</text>
-                                <text id="date-day" x="200" y="222" text-anchor="middle" class="sun-day">01</text>
-                                <text id="date-phase" x="200" y="252" text-anchor="middle"
-                                    class="sun-phase">MENSTRUAL</text>
+                                <text x="200" y="165" text-anchor="middle" dominant-baseline="middle" class="sun-label">Cycle</text>
+                                <text x="200" y="175" text-anchor="middle" dominant-baseline="middle" class="sun-label">Day</text>
+                                <text id="date-day" x="200" y="210" text-anchor="middle" dominant-baseline="middle" class="sun-day">01</text>
+                                <text id="date-phase" x="200" y="238" text-anchor="middle" dominant-baseline="middle" class="sun-phase">MENSTRUAL</text>
                             </g>
 
                             <g id="sun-info-insight" class="sun-insight-group" aria-hidden="true">
@@ -179,22 +182,22 @@
 
             <button id="nav-log" class="nav-leaf nav-core" aria-label="Log entry" type="button">
                 <span class="core-circle">
-                    <svg class="mini-lotus" viewBox="0 0 40 40" width="28" height="28" aria-hidden="true">
+                    <svg class="mini-lotus" viewBox="0 0 40 40" width="32" height="32" aria-hidden="true" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3)); overflow: visible;">
                         <g transform="translate(20,20)">
                             <g class="mini-lotus-spin">
-                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(232,131,124,0.7)" />
-                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(124,212,168,0.7)"
+                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(232,131,124,1.0)" stroke="#fff" stroke-width="0.5"/>
+                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(64,162,118,1.0)" stroke="#fff" stroke-width="0.5"
                                     transform="rotate(60)" />
-                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(255,209,102,0.7)"
+                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(225,159,52,1.0)" stroke="#fff" stroke-width="0.5"
                                     transform="rotate(120)" />
-                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(184,169,212,0.7)"
+                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(144,129,182,1.0)" stroke="#fff" stroke-width="0.5"
                                     transform="rotate(180)" />
-                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(247,197,168,0.7)"
+                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(227,147,108,1.0)" stroke="#fff" stroke-width="0.5"
                                     transform="rotate(240)" />
-                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(126,200,227,0.7)"
+                                <path d="M0,-14 C4,-10 4,-4 0,0 C-4,-4 -4,-10 0,-14Z" fill="rgba(66,150,187,1.0)" stroke="#fff" stroke-width="0.5"
                                     transform="rotate(300)" />
                             </g>
-                            <circle cx="0" cy="0" r="3.5" fill="#e8b530" />
+                            <circle cx="0" cy="0" r="3.5" fill="#e8b530" stroke="#fff" stroke-width="1" />
                         </g>
                     </svg>
                 </span>

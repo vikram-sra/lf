@@ -1,5 +1,5 @@
 /**
- * LotusCycle Aura - Enhanced SVG Lotus Dial
+ * Lady Friend - Enhanced SVG Lotus Dial
  * Rich multi-layer petals with wind sway, organic shapes, high contrast
  */
 
@@ -61,7 +61,7 @@ class LotusDial {
         const animate = () => {
             this.windTime += 0.008;
 
-            // Gentle wind sway on outer decorative layers
+            // Gentle wind sway applied to individual elements or kept minimal to allow CSS animations
             if (this.outerPetalsGroup) {
                 const outerScale = 1 + Math.sin(this.windTime * 0.3) * 0.008;
                 this.outerPetalsGroup.style.transformOrigin = '200px 200px';
@@ -109,15 +109,14 @@ class LotusDial {
         // Offset so they peek between the Layer 3 petals
         for (let i = 0; i < count; i++) {
             const angle = i * step + 15;
-            // Extremely large, wide petals that stretch far out filling the screen
             const path = this.createSVGPath(
-                this.createRichPetalPath(angle, 150, 200, 1.8), // MASSIVE multiplier
+                this.createRichPetalPath(angle, 115, 100, 0.7), // Adjusted multiplier
 
                 'url(#petal-layer4-gradient)',
                 'rgba(212,160,23,0.12)',
                 '0.4'
             );
-            path.style.opacity = '0.55';
+            path.style.opacity = '0.15';
             path.classList.add('wind-petal', 'wind-slow');
             this.outerPetalsGroup.appendChild(path);
         }
@@ -132,13 +131,13 @@ class LotusDial {
             const angle = i * step;
             // Large, full petals
             const path = this.createSVGPath(
-                this.createRichPetalPath(angle, 130, 160, 1.5),
+                this.createRichPetalPath(angle, 100, 80, 0.6),
 
                 'url(#petal-layer3-gradient)',
                 'rgba(212,160,23,0.18)',
                 '0.5'
             );
-            path.style.opacity = '0.70';
+            path.style.opacity = '0.25';
             path.classList.add('wind-petal', 'wind-medium');
             this.outerPetalsGroup.appendChild(path);
         }
@@ -153,13 +152,13 @@ class LotusDial {
         for (let i = 0; i < count; i++) {
             const angle = i * step + offset;
             const path = this.createSVGPath(
-                this.createRichPetalPath(angle, 118, 120, 1.3),
+                this.createRichPetalPath(angle, 85, 65, 0.5),
 
                 'url(#petal-aura-gradient)',
                 'rgba(212,160,23,0.3)',
                 '0.6'
             );
-            path.style.opacity = '0.85';
+            path.style.opacity = '0.35';
             path.classList.add('wind-petal', 'wind-fast');
             this.outerPetalsGroup.appendChild(path);
         }
@@ -173,12 +172,12 @@ class LotusDial {
         for (let i = 0; i < count; i++) {
             const angle = i * step;
             const path = this.createSVGPath(
-                this.createRichPetalPath(angle, 80, 65, 0.9),
+                this.createRichPetalPath(angle, 80, 45, 0.4),
                 'url(#petal-mid-gradient)',
                 'rgba(212,160,23,0.4)',
-                '0.7'
+                '0.4'
             );
-            path.style.opacity = '0.80';
+            path.style.opacity = '0.45';
             this.midPetalsGroup.appendChild(path);
         }
     }
