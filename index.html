@@ -238,8 +238,10 @@
                 <button id="export-json" type="button" class="ghost-btn">Export JSON</button>
                 <button id="export-csv" type="button" class="ghost-btn">Export CSV</button>
                 <button id="import-data" type="button" class="ghost-btn">Import</button>
+                <button id="import-maya-btn" type="button" class="ghost-btn">Import Maya</button>
                 <button id="reset-data" type="button" class="ghost-btn danger">Reset</button>
                 <input id="import-file" type="file" accept="application/json,.csv" class="hidden-input">
+                <input id="import-maya-file" type="file" accept=".csv" class="hidden-input">
             </div>
             <div id="history-body"></div>
             <div class="settings-section">
@@ -260,6 +262,15 @@
             <button id="close-rituals-modal" class="modal-close" type="button" aria-label="Close rituals"></button>
             <h2 id="rituals-title">Self-Care Rituals</h2>
             <div id="rituals-content"></div>
+        </div>
+    </div>
+
+    <div id="onboarding-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="onboarding-title"
+        aria-hidden="true">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content parchment-scroll" tabindex="-1">
+            <h2 id="onboarding-title">Welcome</h2>
+            <div id="onboarding-body"></div>
         </div>
     </div>
 

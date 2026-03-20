@@ -1,6 +1,7 @@
 /**
  * Lady Friend - Modal controller
- * Features: log, history, rituals, settings, CSV import/export, delete entries
+ * Features: log, history (prominent calendar), rituals, settings, CSV import/export,
+ *           onboarding flow, Inner Weather mood picker
  */
 
 class ModalController {
@@ -8,13 +9,18 @@ class ModalController {
         this.modals = {
             log: document.getElementById('log-modal'),
             history: document.getElementById('history-modal'),
-            rituals: document.getElementById('scroll-rituals')
+            rituals: document.getElementById('scroll-rituals'),
+            onboarding: document.getElementById('onboarding-modal')
         };
 
         this.selectedMood = null;
         this.activeType = null;
         this.lastActionTime = 0;
         this.prevFocusedEl = null;
+        this.calendarYear = new Date().getFullYear();
+        this.calendarMonth = new Date().getMonth();
+        this.selectedCalDate = null;
+        this.onboardingStep = 0;
 
         this.init();
     }
@@ -39,6 +45,30 @@ class ModalController {
         document.getElementById('import-file')?.addEventListener('change', (e) => this.importData(e));
         document.getElementById('reset-data')?.addEventListener('click', () => this.resetData());
         document.getElementById('save-settings')?.addEventListener('click', () => this.saveSettings());
+
+        // Maya import
+        document.getElementById('import-maya-btn')?.addEventListener('click', () => {
+            document.getElementById('import-maya-file')?.click();
+        });
+        document.getElementById('import-maya-file')?.addEventListener('change', async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            try {
+                const text = await file.text();
+                await this.importMayaData(text);
+                showToast('Maya data imported successfully 🌸', 'success');
+                this.renderHistory();
+            } catch (err) {
+                console.error('Maya import failed:', err);
+                showToast('Maya import failed. Check file format.', 'error');
+            }
+            e.target.value = '';
+        });
+
+        // Onboarding close
+        document.getElementById('onboarding-modal')?.querySelector('.modal-backdrop')?.addEventListener('click', () => {
+            // Don't allow closing onboarding by clicking backdrop
+        });
 
         document.addEventListener('keydown', (e) => this.onKeyDown(e));
     }
@@ -137,20 +167,24 @@ class ModalController {
         if (!body) return;
 
         const moods = [
+            { icon: '🌧️', label: 'Stormy' },
+            { icon: '🌫️', label: 'Foggy' },
             { icon: '🌙', label: 'Reflective' },
-            { icon: '🌱', label: 'Emerged' },
-            { icon: '☀️', label: 'Radiant' },
+            { icon: '🌱', label: 'Emerging' },
+            { icon: '⛅', label: 'Mellow' },
             { icon: '🌊', label: 'Flowing' },
-            { icon: '🕯️', label: 'Sacred' }
+            { icon: '☀️', label: 'Radiant' },
+            { icon: '🌈', label: 'Luminous' }
         ];
 
         body.innerHTML = `
             <section>
-                <p class="field-title">Mood Alchemy</p>
+                <p class="field-title">Inner Weather</p>
+                <p class="field-hint">How does your internal sky feel today?</p>
                 <div class="mood-grid">
                     ${moods.map((m) => `
                         <button type="button" class="mood-btn" data-mood="${m.label}">
-                            <span>${m.icon}</span>
+                            <span class="mood-icon">${m.icon}</span>
                             <small>${m.label}</small>
                         </button>
                     `).join('')}
@@ -252,30 +286,34 @@ class ModalController {
         }, {});
         const topMood = Object.entries(moodCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
 
-        // Cycle countdown
         const today = new Date();
         const daysUntilPeriod = Math.max(0, Math.ceil((predictions.nextPeriodStart - today) / (1000 * 60 * 60 * 24)));
 
         const calendarHtml = this.renderCalendarHtml(predictions, logs);
+        const dayDetailHtml = this.selectedCalDate ? this.renderDayDetail(this.selectedCalDate, logs) : '';
 
         const statsHtml = `
             ${calendarHtml}
-            <div class="stats-grid">
-                <article class="stat-card"><p class="stat-label">Next Period</p><p class="stat-value">${this.formatDate(predictions.nextPeriodStart)}</p></article>
-                <article class="stat-card"><p class="stat-label">Days Until</p><p class="stat-value">${daysUntilPeriod} day${daysUntilPeriod !== 1 ? 's' : ''}</p></article>
-                <article class="stat-card"><p class="stat-label">Fertile Window</p><p class="stat-value">${this.formatDate(predictions.fertileStart)} - ${this.formatDate(predictions.fertileEnd)}</p></article>
-                <article class="stat-card"><p class="stat-label">Avg Pain</p><p class="stat-value">${avgPain}/10</p></article>
-                <article class="stat-card"><p class="stat-label">Top Mood</p><p class="stat-value">${topMood}</p></article>
-                <article class="stat-card"><p class="stat-label">Total Entries</p><p class="stat-value">${logs.length}</p></article>
+            ${dayDetailHtml}
+            <div class="stats-strip">
+                <div class="stat-pill"><span class="stat-pill-label">Next Period</span><span class="stat-pill-value">${this.formatDate(predictions.nextPeriodStart)}</span></div>
+                <div class="stat-pill"><span class="stat-pill-label">In</span><span class="stat-pill-value">${daysUntilPeriod}d</span></div>
+                <div class="stat-pill"><span class="stat-pill-label">Fertile</span><span class="stat-pill-value">${this.formatDate(predictions.fertileStart)}–${this.formatDate(predictions.fertileEnd)}</span></div>
+                ${predictions.avgCycle ? `<div class="stat-pill"><span class="stat-pill-label">Avg Cycle</span><span class="stat-pill-value">${predictions.avgCycle}d</span></div>` : ''}
+                ${predictions.historicalStarts?.length > 0 ? `<div class="stat-pill"><span class="stat-pill-label">Periods</span><span class="stat-pill-value">${predictions.historicalStarts.length}</span></div>` : ''}
+                <div class="stat-pill"><span class="stat-pill-label">Avg Pain</span><span class="stat-pill-value">${avgPain}</span></div>
+                <div class="stat-pill"><span class="stat-pill-label">Mood</span><span class="stat-pill-value">${topMood}</span></div>
+                <div class="stat-pill"><span class="stat-pill-label">Entries</span><span class="stat-pill-value">${logs.length}</span></div>
             </div>
         `;
 
         if (logs.length === 0) {
-            container.innerHTML = `${statsHtml}<div class="panel-card">No entries yet. Log your first day to unlock trends. 🌸</div>`;
+            container.innerHTML = `${statsHtml}<div class="panel-card" style="color:#4a3620;">No entries yet. Log your first day to unlock trends. 🌸</div>`;
+            this.bindCalendarNav(container);
             return;
         }
 
-        const listHtml = logs.map((log) => `
+        const listHtml = logs.slice(0, 10).map((log) => `
             <article class="history-card">
                 <div class="history-head">
                     <span class="history-date">${new Date(log.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</span>
@@ -289,7 +327,9 @@ class ModalController {
             </article>
         `).join('');
 
-        container.innerHTML = `${statsHtml}<div class="history-list">${listHtml}</div>`;
+        container.innerHTML = `${statsHtml}<h3 class="history-entries-heading">Recent Entries</h3><div class="history-list">${listHtml}</div>`;
+
+        this.bindCalendarNav(container);
 
         // Bind delete buttons
         container.querySelectorAll('.history-delete-btn').forEach((btn) => {
@@ -305,6 +345,133 @@ class ModalController {
                 } catch (err) {
                     showToast('Could not delete entry', 'error');
                 }
+            });
+        });
+    }
+
+    renderDayDetail(dateStr, logs) {
+        const log = logs.find(l => l.date === dateStr);
+        const d = new Date(dateStr + 'T12:00:00');
+        const display = d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+
+        // Get prediction info for this date
+        const predictions = window.cycleStore.getState().getPredictions();
+        const year = d.getFullYear();
+        const month = d.getMonth();
+        const windows = predictions.getWindowsForMonth ? predictions.getWindowsForMonth(year, month) : {};
+        const win = windows[dateStr] || {};
+
+        const phaseNames = {
+            menstrual: 'Menstrual (Rest & Release)',
+            follicular: 'Follicular (Rise & Renew)',
+            ovulatory: 'Ovulatory (Radiate & Connect)',
+            luteal: 'Luteal (Reflect & Ground)'
+        };
+        const phaseColors = {
+            menstrual: '#E8837C',
+            follicular: '#7CD4A8',
+            ovulatory: '#FFD166',
+            luteal: '#B8A9D4'
+        };
+        const phaseIcons = {
+            menstrual: '🌙',
+            follicular: '🌱',
+            ovulatory: '☀️',
+            luteal: '🍂'
+        };
+
+        // Phase prediction block
+        let phaseHtml = '';
+        if (win.phase) {
+            const phaseData = typeof getPhaseData === 'function' ? getPhaseData(win.phase) : null;
+            const phaseName = phaseNames[win.phase] || win.phase;
+            const phaseColor = phaseColors[win.phase] || '#8B6914';
+            const phaseIcon = phaseIcons[win.phase] || '✨';
+            const cycleDayLabel = win.cycleDay ? `Day ${win.cycleDay}` : '';
+
+            let predictionBadges = '';
+            if (win.period) predictionBadges += '<span class="detail-badge period-badge">Period</span>';
+            if (win.ovulation) predictionBadges += '<span class="detail-badge ovul-badge">🥚 Ovulation</span>';
+            if (win.fertile && !win.ovulation) predictionBadges += '<span class="detail-badge fertile-badge">Fertile Window</span>';
+
+            // Top food recommendations
+            let foodTips = '';
+            if (phaseData?.nourishment?.foods) {
+                const topFoods = phaseData.nourishment.foods.slice(0, 3);
+                foodTips = `<div class="detail-tips">
+                    <span class="detail-tips-label">🍽 Nourish</span>
+                    ${topFoods.map(f => `<span class="detail-tip-item">${f.name}</span>`).join('')}
+                </div>`;
+            }
+
+            // Top asana recommendations
+            let asanaTips = '';
+            if (phaseData?.asanas?.practices) {
+                const topAsanas = phaseData.asanas.practices.slice(0, 2);
+                asanaTips = `<div class="detail-tips">
+                    <span class="detail-tips-label">🧘 Move</span>
+                    ${topAsanas.map(a => `<span class="detail-tip-item">${a.name.split('(')[0].trim()}</span>`).join('')}
+                </div>`;
+            }
+
+            phaseHtml = `
+                <div class="detail-phase-block" style="border-left: 3px solid ${phaseColor};">
+                    <div class="detail-phase-header">
+                        <span>${phaseIcon} ${phaseName}</span>
+                        ${cycleDayLabel ? `<span class="detail-cycle-day">${cycleDayLabel}</span>` : ''}
+                    </div>
+                    ${predictionBadges ? `<div class="detail-badges">${predictionBadges}</div>` : ''}
+                    ${phaseData ? `<p class="detail-energy">Energy: ${phaseData.energy}</p>` : ''}
+                    ${foodTips}
+                    ${asanaTips}
+                </div>`;
+        }
+
+        // Logged data block
+        let logHtml = '';
+        if (log) {
+            logHtml = `
+                <div class="detail-log-block">
+                    <div class="day-detail-row">
+                        <span class="day-detail-mood">${this.getMoodIcon(log.mood)} ${log.mood}</span>
+                        ${log.isPeriod ? '<span class="chip">Period Logged</span>' : ''}
+                    </div>
+                    ${log.notes ? `<p class="day-detail-notes">"${log.notes}"</p>` : ''}
+                    <div class="day-detail-symptoms">
+                        <span>Pain ${Number(log?.symptoms?.pain || 0)}</span>
+                        <span>Bloating ${Number(log?.symptoms?.bloating || 0)}</span>
+                        <span>Energy ${Number(log?.symptoms?.energy || 0)}</span>
+                        <span>Sleep ${Number(log?.symptoms?.sleep || 0)}</span>
+                    </div>
+                </div>`;
+        } else {
+            logHtml = `<p class="day-detail-empty">No entry logged.</p>`;
+        }
+
+        return `
+            <div class="day-detail-panel">
+                <p class="day-detail-date">${display}</p>
+                ${phaseHtml}
+                ${logHtml}
+            </div>
+        `;
+    }
+
+    bindCalendarNav(container) {
+        container.querySelector('#cal-prev')?.addEventListener('click', () => {
+            this.calendarMonth--;
+            if (this.calendarMonth < 0) { this.calendarMonth = 11; this.calendarYear--; }
+            this.renderHistory();
+        });
+        container.querySelector('#cal-next')?.addEventListener('click', () => {
+            this.calendarMonth++;
+            if (this.calendarMonth > 11) { this.calendarMonth = 0; this.calendarYear++; }
+            this.renderHistory();
+        });
+        container.querySelectorAll('.cal-day[data-date]').forEach(cell => {
+            cell.addEventListener('click', () => {
+                this.selectedCalDate = cell.dataset.date;
+                this.renderHistory();
             });
         });
     }
@@ -548,10 +715,15 @@ class ModalController {
 
     getMoodIcon(mood) {
         const map = {
+            Stormy: '🌧️',
+            Foggy: '🌫️',
             Reflective: '🌙',
+            Emerging: '🌱',
             Emerged: '🌱',
-            Radiant: '☀️',
+            Mellow: '⛅',
             Flowing: '🌊',
+            Radiant: '☀️',
+            Luminous: '🌈',
             Sacred: '🕯️',
             Neutral: '✨'
         };
@@ -560,44 +732,361 @@ class ModalController {
 
     renderCalendarHtml(predictions, logs) {
         const today = new Date();
-        const year = today.getFullYear();
-        const month = today.getMonth();
+        const year = this.calendarYear;
+        const month = this.calendarMonth;
         const firstDay = new Date(year, month, 1).getDay();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const monthLabel = new Date(year, month, 1).toLocaleString('default', { month: 'long', year: 'numeric' });
 
-        const pStart = new Date(predictions.nextPeriodStart); pStart.setHours(0,0,0,0);
-        const pEnd = new Date(predictions.nextPeriodEnd); pEnd.setHours(23,59,59,999);
-        const fStart = new Date(predictions.fertileStart); fStart.setHours(0,0,0,0);
-        const fEnd = new Date(predictions.fertileEnd); fEnd.setHours(23,59,59,999);
         const logsMap = new Set(logs.map(l => l.date));
 
-        let html = `<div class="calendar-wrapper"><h3 class="cal-title">${today.toLocaleString('default', { month: 'long', year: 'numeric' })}</h3><div class="calendar-grid">`;
-        ['S','M','T','W','T','F','S'].forEach(d => html += `<div class="cal-header">${d}</div>`);
+        // Multi-cycle prediction windows for this month
+        const windows = predictions.getWindowsForMonth
+            ? predictions.getWindowsForMonth(year, month)
+            : {};
+
+        const avgInfo = predictions.avgCycle
+            ? `<span class="cal-avg-badge">~${predictions.avgCycle}d cycle</span>`
+            : '';
+
+        let html = `<div class="calendar-wrapper calendar-hero">
+            <div class="cal-nav">
+                <button type="button" id="cal-prev" class="cal-nav-btn" aria-label="Previous month">‹</button>
+                <h3 class="cal-title">${monthLabel} ${avgInfo}</h3>
+                <button type="button" id="cal-next" class="cal-nav-btn" aria-label="Next month">›</button>
+            </div>
+            <div class="calendar-grid">`;
+
+        ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => html += `<div class="cal-header">${d}</div>`);
         
         for (let i = 0; i < firstDay; i++) html += `<div class="cal-day empty"></div>`;
 
         for (let day = 1; day <= daysInMonth; day++) {
             const date = new Date(year, month, day);
-            // Timezone safe ISO
             const dateStr = [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-');
             const isLogged = logsMap.has(dateStr);
-            const isToday = day === today.getDate();
+            const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+            const isSelected = dateStr === this.selectedCalDate;
+
+            const win = windows[dateStr] || {};
             
             let classes = ['cal-day'];
             if (isToday) classes.push('today');
+            if (isSelected) classes.push('selected');
             if (isLogged) classes.push('logged');
-            if (date >= pStart && date <= pEnd) classes.push('predicted-period');
-            else if (date >= fStart && date <= fEnd) classes.push('predicted-fertile');
+            if (win.period) classes.push('predicted-period');
+            else if (win.ovulation) classes.push('predicted-ovulation');
+            else if (win.fertile) classes.push('predicted-fertile');
 
-            html += `<div class="${classes.join(' ')}">${day}</div>`;
+            // Phase accent stripe
+            if (win.phase && !win.period && !win.fertile && !win.ovulation) {
+                classes.push('phase-' + win.phase);
+            }
+
+            // Cycle day label
+            const cycleDayLabel = win.cycleDay ? `<span class="cal-cycle-day">D${win.cycleDay}</span>` : '';
+            const ovLabel = win.ovulation ? `<span class="cal-ov-badge">🥚</span>` : '';
+
+            html += `<div class="${classes.join(' ')}" data-date="${dateStr}" role="button" tabindex="0">
+                <span class="cal-day-num">${day}</span>
+                ${cycleDayLabel}
+                ${ovLabel}
+                ${isLogged ? '<span class="cal-logged-dot"></span>' : ''}
+            </div>`;
         }
         
         html += `</div><div class="cal-legend">
                 <span><div class="cal-dot peri"></div> Period</span>
                 <span><div class="cal-dot fert"></div> Fertile</span>
+                <span><div class="cal-dot ovul"></div> Ovulation</span>
                 <span><div class="cal-dot log"></div> Logged</span>
             </div></div>`;
         return html;
+    }
+
+    // --- Onboarding Flow ---
+    showOnboarding() {
+        const modal = this.modals.onboarding;
+        if (!modal) return;
+
+        const body = document.getElementById('onboarding-body');
+        if (!body) return;
+
+        this.onboardingStep = 0;
+        this.renderOnboardingStep(body);
+
+        modal.classList.remove('hidden');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+        this.activeType = 'onboarding';
+
+        requestAnimationFrame(() => {
+            modal.style.opacity = '1';
+            modal.querySelector('.modal-content')?.focus();
+        });
+    }
+
+    renderOnboardingStep(body) {
+        const steps = [
+            {
+                title: 'Welcome to Lady Friend 🌸',
+                content: `
+                    <div class="onboarding-center">
+                        <p class="onboarding-desc">A biophilic cycle companion that honors your body's natural rhythms.</p>
+                        <div class="onboarding-features">
+                            <div class="onboarding-feat">🌺 <span>Track your cycle phases</span></div>
+                            <div class="onboarding-feat">🍃 <span>Phase-based nourishment</span></div>
+                            <div class="onboarding-feat">🧘 <span>Yoga & movement guides</span></div>
+                            <div class="onboarding-feat">📊 <span>Insights & predictions</span></div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: 'Set Your Cycle ⚙️',
+                content: `
+                    <div class="onboarding-form">
+                        <div class="settings-field"><label for="ob-cycle">Cycle Length (days)</label><input id="ob-cycle" type="number" min="20" max="45" value="28"></div>
+                        <div class="settings-field"><label for="ob-period">Period Length (days)</label><input id="ob-period" type="number" min="2" max="10" value="5"></div>
+                        <div class="settings-field"><label for="ob-last">Last Period Start</label><input id="ob-last" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
+                    </div>
+                `
+            },
+            {
+                title: 'Import Your Data 📂',
+                content: `
+                    <div class="onboarding-center">
+                        <p class="onboarding-desc">Import existing data from another tracker, or start fresh.</p>
+                        <div class="onboarding-import-options">
+                            <button type="button" id="ob-import-csv" class="ghost-btn">Import CSV</button>
+                            <button type="button" id="ob-import-json" class="ghost-btn">Import JSON</button>
+                            <button type="button" id="ob-import-maya" class="ghost-btn">Import Maya</button>
+                        </div>
+                        <p class="onboarding-hint">Supports Lady Friend CSV/JSON and Maya period tracker exports.</p>
+                    </div>
+                `
+            }
+        ];
+
+        const step = steps[this.onboardingStep];
+        const isLast = this.onboardingStep === steps.length - 1;
+        const isFirst = this.onboardingStep === 0;
+
+        body.innerHTML = `
+            <div class="onboarding-step">
+                <div class="onboarding-progress">
+                    ${steps.map((_, i) => `<div class="onboarding-dot ${i === this.onboardingStep ? 'active' : (i < this.onboardingStep ? 'done' : '')}"></div>`).join('')}
+                </div>
+                <h3 class="onboarding-title">${step.title}</h3>
+                ${step.content}
+                <div class="onboarding-actions">
+                    ${!isFirst ? '<button type="button" id="ob-back" class="ghost-btn">Back</button>' : ''}
+                    <button type="button" id="ob-next" class="primary-btn">${isLast ? 'Get Started' : 'Continue'}</button>
+                </div>
+            </div>
+        `;
+
+        body.querySelector('#ob-back')?.addEventListener('click', () => {
+            this.onboardingStep--;
+            this.renderOnboardingStep(body);
+        });
+
+        body.querySelector('#ob-next')?.addEventListener('click', async () => {
+            if (this.onboardingStep === 1) {
+                const cycle = Number(document.getElementById('ob-cycle')?.value) || 28;
+                const period = Number(document.getElementById('ob-period')?.value) || 5;
+                const lastPeriod = document.getElementById('ob-last')?.value || new Date().toISOString().split('T')[0];
+                await window.cycleStore.getState().updateSettings({
+                    cycleLength: cycle,
+                    periodLength: period,
+                    lastPeriodStart: lastPeriod
+                });
+            }
+
+            if (isLast) {
+                await window.cycleStore.getState().setInitialized(true);
+                this.close('onboarding');
+                showToast('Welcome! Your cycle is set up. 🌸', 'success');
+                return;
+            }
+            this.onboardingStep++;
+            this.renderOnboardingStep(body);
+        });
+
+        // Import handlers on step 3
+        const triggerFileImport = (accept) => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = accept;
+            input.onchange = (e) => this.importData(e);
+            input.click();
+        };
+
+        body.querySelector('#ob-import-csv')?.addEventListener('click', () => triggerFileImport('.csv'));
+        body.querySelector('#ob-import-json')?.addEventListener('click', () => triggerFileImport('application/json'));
+        body.querySelector('#ob-import-maya')?.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv';
+            input.onchange = async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                try {
+                    const text = await file.text();
+                    await this.importMayaData(text);
+                    showToast('Maya data imported successfully 🌸', 'success');
+                } catch (err) {
+                    console.error('Maya import failed:', err);
+                    showToast('Maya import failed. Check file format.', 'error');
+                }
+            };
+            input.click();
+        });
+    }
+
+    // --- Maya Period Tracker Import ---
+    async importMayaData(csvText) {
+        const lines = csvText.split('\n').map(l => l.trim());
+        const store = window.cycleStore.getState();
+
+        // Parse the multi-section Maya format
+        const sections = {};
+        let currentSection = null;
+        let sectionLines = [];
+
+        for (const line of lines) {
+            // Section headers are single words without commas (e.g., "history_dates", "moods", "symptoms")
+            if (!line) continue;
+            if (!line.includes(',') && !line.match(/^\d/) && line.match(/^[a-z_]+$/)) {
+                if (currentSection) sections[currentSection] = sectionLines;
+                currentSection = line;
+                sectionLines = [];
+            } else {
+                sectionLines.push(line);
+            }
+        }
+        if (currentSection) sections[currentSection] = sectionLines;
+
+        // Parse history_dates (start_date, end_date) — these are period start/end
+        const periodDates = [];
+        const historyLines = sections['history_dates'] || [];
+        for (const hl of historyLines) {
+            if (hl.startsWith('start_date')) continue;
+            const [startStr, endStr] = hl.split(',');
+            const start = this.parseMayaDate(startStr?.trim());
+            const end = this.parseMayaDate(endStr?.trim());
+            if (start) {
+                periodDates.push({ start, end });
+                // Create log entries for each day of the period
+                let current = new Date(start);
+                const endDate = end ? new Date(end) : new Date(start);
+                while (current <= endDate) {
+                    const dateStr = current.toISOString().split('T')[0];
+                    await store.addLog({
+                        date: dateStr,
+                        mood: 'Neutral',
+                        notes: '',
+                        isPeriod: true,
+                        symptoms: { pain: 0, bloating: 0, energy: 5, sleep: 5 }
+                    });
+                    current.setDate(current.getDate() + 1);
+                }
+            }
+        }
+
+        // Parse moods section
+        const moodLines = sections['moods'] || [];
+        for (const ml of moodLines) {
+            if (ml.startsWith('date')) continue;
+            const firstComma = ml.indexOf(',');
+            if (firstComma === -1) continue;
+            const dateStr = ml.substring(0, firstComma).trim();
+            const moodText = ml.substring(firstComma + 1).trim();
+            const d = this.parseMayaDate(dateStr);
+            if (d) {
+                const iso = d.toISOString().split('T')[0];
+                await store.addLog({
+                    date: iso,
+                    mood: this.mapMayaMood(moodText),
+                    notes: `Maya mood: ${moodText}`,
+                    isPeriod: false,
+                    symptoms: { pain: 0, bloating: 0, energy: 5, sleep: 5 }
+                });
+            }
+        }
+
+        // Parse symptoms section
+        const symptomLines = sections['symptoms'] || [];
+        for (const sl of symptomLines) {
+            if (sl.startsWith('date')) continue;
+            const firstComma = sl.indexOf(',');
+            if (firstComma === -1) continue;
+            const dateStr = sl.substring(0, firstComma).trim();
+            const sympText = sl.substring(firstComma + 1).trim();
+            const d = this.parseMayaDate(dateStr);
+            if (d) {
+                const iso = d.toISOString().split('T')[0];
+                const symptoms = this.mapMayaSymptoms(sympText);
+                await store.addLog({
+                    date: iso,
+                    mood: 'Neutral',
+                    notes: `Maya symptoms: ${sympText}`,
+                    isPeriod: false,
+                    symptoms
+                });
+            }
+        }
+
+        // Set last period start from most recent history_dates entry
+        if (periodDates.length > 0) {
+            const last = periodDates[periodDates.length - 1];
+            await store.updateSettings({ lastPeriodStart: last.start.toISOString().split('T')[0] });
+        }
+    }
+
+    parseMayaDate(str) {
+        if (!str) return null;
+        // Format: DD-MMM-YYYY e.g. "25-Jun-2017"
+        const months = { Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11 };
+        const parts = str.split('-');
+        if (parts.length !== 3) return null;
+        const day = parseInt(parts[0]);
+        const mon = months[parts[1]];
+        const year = parseInt(parts[2]);
+        if (isNaN(day) || mon === undefined || isNaN(year)) return null;
+        return new Date(year, mon, day);
+    }
+
+    mapMayaMood(moodText) {
+        const lower = moodText.toLowerCase();
+        if (lower.includes('depressed') || lower.includes('sad')) return 'Stormy';
+        if (lower.includes('anxious') || lower.includes('stressed') || lower.includes('irritated')) return 'Foggy';
+        if (lower.includes('cranky') || lower.includes('frustrated')) return 'Foggy';
+        if (lower.includes('happy') || lower.includes('excited') || lower.includes('confident')) return 'Radiant';
+        if (lower.includes('peaceful') || lower.includes('calm')) return 'Flowing';
+        if (lower.includes('romantic') || lower.includes('sexy') || lower.includes('naughty')) return 'Luminous';
+        if (lower.includes('sleepy') || lower.includes('lazy')) return 'Mellow';
+        if (lower.includes('emotional') || lower.includes('blue')) return 'Reflective';
+        return 'Neutral';
+    }
+
+    mapMayaSymptoms(sympText) {
+        const lower = sympText.toLowerCase();
+        let pain = 0, bloating = 0, energy = 5, sleep = 5;
+        if (lower.includes('cramp')) pain += 4;
+        if (lower.includes('achy')) pain += 3;
+        if (lower.includes('headache')) pain += 3;
+        if (lower.includes('bloat')) bloating += 4;
+        if (lower.includes('gas')) bloating += 2;
+        if (lower.includes('breast_tenderness')) bloating += 2;
+        if (lower.includes('tired') || lower.includes('weak')) energy -= 2;
+        if (lower.includes('insomnia')) sleep -= 3;
+        return {
+            pain: Math.min(10, pain),
+            bloating: Math.min(10, bloating),
+            energy: Math.max(0, energy),
+            sleep: Math.max(0, sleep)
+        };
     }
 }
 

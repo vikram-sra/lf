@@ -1,0 +1,209 @@
+history_dates
+start_date,end_date
+25-Jun-2017,29-Jun-2017
+27-Jul-2017,31-Jul-2017
+29-Aug-2017,02-Sep-2017
+25-Sep-2017,29-Sep-2017
+22-Oct-2017,28-Oct-2017
+25-Nov-2017,29-Nov-2017
+13-Dec-2017,17-Dec-2017
+12-Jan-2018,16-Jan-2018
+09-Feb-2018,13-Feb-2018
+10-Mar-2018,14-Mar-2018
+06-Apr-2018,10-Apr-2018
+04-May-2018,08-May-2018
+01-Jun-2018,06-Jun-2018
+01-Jul-2018,05-Jul-2018
+27-Jul-2018,31-Jul-2018
+22-Aug-2018,26-Aug-2018
+30-Sep-2018,04-Oct-2018
+23-Oct-2018,27-Oct-2018
+19-Nov-2018,23-Nov-2018
+14-Dec-2018,18-Dec-2018
+15-Jan-2019,19-Jan-2019
+14-Feb-2019,18-Feb-2019
+13-Mar-2019,17-Mar-2019
+07-Apr-2019,11-Apr-2019
+04-May-2019,08-May-2019
+29-May-2019,02-Jun-2019
+23-Jun-2019,27-Jun-2019
+19-Jul-2019,23-Jul-2019
+16-Aug-2019,20-Aug-2019
+11-Sep-2019,15-Sep-2019
+10-Oct-2019,14-Oct-2019
+08-Nov-2019,12-Nov-2019
+09-Dec-2019,13-Dec-2019
+06-Jan-2020,11-Jan-2020
+05-Feb-2020,09-Feb-2020
+02-Mar-2020,06-Mar-2020
+26-Apr-2020,30-Apr-2020
+23-May-2020,27-May-2020
+18-Jun-2020,22-Jun-2020
+15-Jul-2020,19-Jul-2020
+09-Aug-2020,13-Aug-2020
+07-Sep-2020,11-Sep-2020
+03-Oct-2020,07-Oct-2020
+29-Oct-2020,02-Nov-2020
+25-Nov-2020,29-Nov-2020
+25-Dec-2020,29-Dec-2020
+12-Jan-2021,16-Jan-2021
+12-Feb-2021,15-Feb-2021
+08-Mar-2021,12-Mar-2021
+04-Apr-2021,08-Apr-2021
+01-May-2021,05-May-2021
+26-May-2021,30-May-2021
+23-Jun-2021,27-Jun-2021
+18-Jul-2021,22-Jul-2021
+13-Aug-2021,17-Aug-2021
+07-Sep-2021,11-Sep-2021
+04-Oct-2021,08-Oct-2021
+10-Nov-2021,14-Nov-2021
+06-Dec-2021,10-Dec-2021
+02-Jan-2022,06-Jan-2022
+27-Jan-2022,31-Jan-2022
+25-Feb-2022,01-Mar-2022
+27-Mar-2022,31-Mar-2022
+21-Apr-2022,25-Apr-2022
+19-May-2022,23-May-2022
+16-Jun-2022,20-Jun-2022
+13-Jul-2022,17-Jul-2022
+07-Aug-2022,11-Aug-2022
+01-Sep-2022,05-Sep-2022
+25-Sep-2022,29-Sep-2022
+22-Oct-2022,26-Oct-2022
+17-Nov-2022,21-Nov-2022
+23-Dec-2022,27-Dec-2022
+17-Jan-2023,21-Jan-2023
+13-Feb-2023,17-Feb-2023
+13-Mar-2023,17-Mar-2023
+10-Apr-2023,14-Apr-2023
+05-May-2023,09-May-2023
+30-May-2023,02-Jun-2023
+22-Jun-2023,25-Jun-2023
+19-Jul-2023,23-Jul-2023
+11-Aug-2023,15-Aug-2023
+08-Sep-2023,12-Sep-2023
+04-Oct-2023,07-Oct-2023
+28-Oct-2023,01-Nov-2023
+26-Nov-2023,30-Nov-2023
+20-Dec-2023,24-Dec-2023
+14-Jan-2024,18-Jan-2024
+10-Feb-2024,15-Feb-2024
+09-Mar-2024,13-Mar-2024
+03-Apr-2024,08-Apr-2024
+27-Apr-2024,01-May-2024
+27-May-2024,31-May-2024
+23-Jun-2024,27-Jun-2024
+17-Jul-2024,21-Jul-2024
+12-Aug-2024,16-Aug-2024
+09-Sep-2024,14-Sep-2024
+02-Oct-2024,07-Oct-2024
+27-Oct-2024,31-Oct-2024
+27-Nov-2024,01-Dec-2024
+23-Dec-2024,27-Dec-2024
+17-Jan-2025,21-Jan-2025
+15-Feb-2025,19-Feb-2025
+10-Mar-2025,14-Mar-2025
+05-Apr-2025,09-Apr-2025
+30-Apr-2025,05-May-2025
+27-May-2025,31-May-2025
+20-Jun-2025,24-Jun-2025
+19-Jul-2025,23-Jul-2025
+13-Aug-2025,17-Aug-2025
+06-Sep-2025,10-Sep-2025
+29-Sep-2025,03-Oct-2025
+24-Oct-2025,28-Oct-2025
+17-Nov-2025,21-Nov-2025
+13-Dec-2025,17-Dec-2025
+01-Jan-2026,12-Jan-2026
+
+cervical_mucus
+date
+
+love_notes
+date
+03-Nov-2023
+08-Oct-2023
+
+pill_dates
+date
+
+flow_strengths
+date,flow_strengths
+25-Jun-2017,4
+11-Sep-2019,5
+
+temperatures
+date,temperatures
+
+weights
+date,weights
+
+notes
+date,notes
+20-Oct-2017,Sagar late
+
+moods
+date,moods
+05-Jul-2017,blue
+12-Jul-2017,unfocused, cranky
+23-Jul-2017,frustrated, lazy, stressed, cranky
+26-Jul-2017,sleepy, naughty, blue
+21-Oct-2017,anxious, lazy, sad, blue, emotional, depressed
+15-Dec-2018,irritated, blue, cranky
+11-Sep-2019,craving, emotional, blue
+06-Oct-2019,craving, emotional, confused, blue
+19-Nov-2019,lazy, confused, anxious, blue, depressed
+02-Dec-2019,lazy, happy, confused, frustrated, sleepy
+01-Jan-2020,excited, lazy, emotional, confused, anxious
+18-Jun-2020,emotional
+05-Jul-2020,blue
+07-Aug-2020,stressed, confused, anxious, naughty, unfocused, cranky
+08-Aug-2020,lazy, craving, blue, sleepy
+04-Oct-2020,lazy, craving, emotional, sad, anxious, blue, cranky, depressed
+19-Nov-2020,romantic, emotional, happy, peaceful, calm
+16-Feb-2021,romantic, craving, happy, sexy, blue, naughty, peaceful, sleepy, calm
+13-Mar-2021,romantic, excited, happy, sexy, confident
+01-May-2021,romantic, lazy, craving, emotional, sexy, naughty, sleepy, calm
+02-Jan-2022,cranky, frustrated, irritated, stressed
+20-Apr-2022,emotional, anxious, blue, cranky, craving
+23-Oct-2022,cranky, emotional, stressed, depressed
+28-May-2023,emotional, sad
+18-Nov-2023,emotional, sad, blue
+03-Apr-2024,emotional, blue, craving, lazy, sleepy
+19-Jul-2025,cranky, forgetful, sad, unfocused
+
+symptoms
+date,symptoms
+12-Jul-2017,insomnia, achy, constipation
+23-Jul-2017,breast_tenderness, acne, tired, dizzy, pms, insomnia
+26-Jul-2017,cramps, tired, dizzy, achy, bloated, pms
+15-Dec-2018,cramps, tired, weak, achy, bloated, nausea, gas
+11-Sep-2019,cramps, spotting, bloated, sweaty, diarrhea
+06-Oct-2019,dizzy, headache, tired, acne
+19-Nov-2019,weak, dizzy, fever, pms, tired, acne, insomnia
+02-Dec-2019,constipation, bloated, gas, tired
+01-Jan-2020,bloated, breast_tenderness, dizzy, pms, diarrhea, blood_pressure_low
+18-Jun-2020,cramps, spotting, bloated, achy, pms, sweaty, acne, insomnia
+05-Jul-2020,itch, mucus, sweaty
+07-Aug-2020,nausea, bloated, dizzy, achy, tired, acne, insomnia
+08-Aug-2020,spotting, bloated, breast_tenderness, dizzy, achy, gas, sweaty, acne, diarrhea
+04-Oct-2020,weak, constipation, bloated, breast_tenderness, gas, tired
+19-Nov-2020,breast_tenderness, pms
+16-Feb-2021,spotting, gas, acne, insomnia
+13-Mar-2021,acne
+01-May-2021,constipation, spotting, bloated, breast_tenderness, dizzy, headache, pms, tired, acne
+09-Jun-2021,constipation, bloated, achy, mucus
+29-Dec-2021,bloated, breast_tenderness, weight_gain
+02-Jan-2022,achy, acne, cramps, gas, pms
+20-Apr-2022,breast_tenderness, acne, constipation, gas, insomnia, mucus, tired
+12-Jun-2022,breast_tenderness, constipation, acne
+23-Oct-2022,achy, cramps, diarrhea, pms
+31-Dec-2023,achy, bloated, constipation
+03-Apr-2024,bloated, breast_tenderness, diarrhea, gas, tired, weak
+17-Jul-2024,achy, tired, breast_tenderness, insomnia
+19-Jul-2025,achy, cramps
+29-Nov-2025,achy, bloated
+
+pregnancy
+

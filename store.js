@@ -186,26 +186,139 @@ const cycleStore = createStore((set, get) => ({
     },
 
     getPredictions: () => {
-        const { cycleLength, periodLength, lastPeriodStart } = get().settings;
+        const state = get();
+        const { cycleLength, periodLength, lastPeriodStart } = state.settings;
         const cycle = Number(cycleLength) || 28;
         const period = Number(periodLength) || 5;
         const base = new Date(lastPeriodStart);
 
-        const nextPeriodStart = new Date(base);
-        nextPeriodStart.setDate(base.getDate() + cycle);
+        // Compute average cycle from historical period logs
+        const periodStarts = (state.logs || [])
+            .filter(l => l.isPeriod)
+            .map(l => new Date(l.date + 'T12:00:00'))
+            .sort((a, b) => a - b);
 
+        // Deduplicate to get unique period start dates (first day of each cluster)
+        const uniqueStarts = [];
+        for (const d of periodStarts) {
+            const last = uniqueStarts[uniqueStarts.length - 1];
+            if (!last || (d - last) > 5 * 86400000) {
+                uniqueStarts.push(d);
+            }
+        }
+
+        // Calculate average cycle length from history if we have enough data
+        let avgCycle = cycle;
+        if (uniqueStarts.length >= 3) {
+            const gaps = [];
+            for (let i = 1; i < uniqueStarts.length; i++) {
+                const gap = Math.round((uniqueStarts[i] - uniqueStarts[i - 1]) / 86400000);
+                if (gap >= 18 && gap <= 50) gaps.push(gap); // filter outliers
+            }
+            if (gaps.length >= 2) {
+                avgCycle = Math.round(gaps.reduce((s, g) => s + g, 0) / gaps.length);
+            }
+        }
+
+        // Legacy single-cycle predictions
+        const nextPeriodStart = new Date(base);
+        nextPeriodStart.setDate(base.getDate() + avgCycle);
+
+        const ovulationDay = Math.round(avgCycle - 14);
         const fertileStart = new Date(base);
-        fertileStart.setDate(base.getDate() + Math.round(cycle - 14) - 2);
+        fertileStart.setDate(base.getDate() + ovulationDay - 2);
 
         const fertileEnd = new Date(base);
-        fertileEnd.setDate(base.getDate() + Math.round(cycle - 14) + 2);
+        fertileEnd.setDate(base.getDate() + ovulationDay + 2);
 
         const nextPeriodEnd = new Date(nextPeriodStart);
         nextPeriodEnd.setDate(nextPeriodStart.getDate() + period - 1);
 
-        return { nextPeriodStart, nextPeriodEnd, fertileStart, fertileEnd };
+        return {
+            nextPeriodStart,
+            nextPeriodEnd,
+            fertileStart,
+            fertileEnd,
+            avgCycle,
+            periodLength: period,
+            historicalStarts: uniqueStarts,
+
+            // Multi-cycle window generator for calendar
+            getWindowsForMonth: (year, month) => {
+                const monthStart = new Date(year, month, 1);
+                const monthEnd = new Date(year, month + 1, 0, 23, 59, 59, 999);
+                const daysInMonth = monthEnd.getDate();
+                const dayMap = {}; // dateStr -> { period, fertile, ovulation, predicted, phase }
+
+                // Generate cycles spanning -24 to +12 months from lastPeriodStart
+                const anchor = new Date(base);
+                const cycles = [];
+                for (let n = -30; n <= 15; n++) {
+                    const cycleStart = new Date(anchor);
+                    cycleStart.setDate(anchor.getDate() + n * avgCycle);
+                    cycles.push(cycleStart);
+                }
+
+                for (const cycleStart of cycles) {
+                    // Period window
+                    for (let d = 0; d < period; d++) {
+                        const pd = new Date(cycleStart);
+                        pd.setDate(cycleStart.getDate() + d);
+                        if (pd >= monthStart && pd <= monthEnd) {
+                            const key = toDateStr(pd);
+                            dayMap[key] = dayMap[key] || {};
+                            dayMap[key].period = true;
+                            dayMap[key].predicted = true;
+                        }
+                    }
+
+                    // Fertile window
+                    const ov = Math.round(avgCycle - 14);
+                    for (let d = ov - 3; d <= ov + 2; d++) {
+                        const fd = new Date(cycleStart);
+                        fd.setDate(cycleStart.getDate() + d);
+                        if (fd >= monthStart && fd <= monthEnd) {
+                            const key = toDateStr(fd);
+                            dayMap[key] = dayMap[key] || {};
+                            dayMap[key].fertile = true;
+                            dayMap[key].predicted = true;
+                        }
+                    }
+
+                    // Ovulation day
+                    const od = new Date(cycleStart);
+                    od.setDate(cycleStart.getDate() + ov);
+                    if (od >= monthStart && od <= monthEnd) {
+                        const key = toDateStr(od);
+                        dayMap[key] = dayMap[key] || {};
+                        dayMap[key].ovulation = true;
+                        dayMap[key].predicted = true;
+                    }
+
+                    // Phase labels for each day
+                    for (let d = 0; d < avgCycle; d++) {
+                        const pd = new Date(cycleStart);
+                        pd.setDate(cycleStart.getDate() + d);
+                        if (pd >= monthStart && pd <= monthEnd) {
+                            const key = toDateStr(pd);
+                            dayMap[key] = dayMap[key] || {};
+                            if (!dayMap[key].phase) {
+                                dayMap[key].phase = getPhaseFromDay(d + 1, avgCycle);
+                            }
+                            dayMap[key].cycleDay = d + 1;
+                        }
+                    }
+                }
+
+                return dayMap;
+            }
+        };
     }
 }));
+
+function toDateStr(d) {
+    return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-');
+}
 
 window.cycleStore = cycleStore;
 cycleStore.getState().init();

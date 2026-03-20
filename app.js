@@ -89,7 +89,10 @@ class LadyFriendApp {
         if (!state) return;
 
         if (!state.initialized) {
-            state.setInitialized(true);
+            // Show onboarding wizard for first-time users
+            setTimeout(() => {
+                window.modalController?.showOnboarding?.();
+            }, 600);
         }
     }
 

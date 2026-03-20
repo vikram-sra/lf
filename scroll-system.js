@@ -6,6 +6,7 @@ class ParchmentScrolls {
     constructor() {
         this.tabs = Array.from(document.querySelectorAll('.scroll-tab'));
         this.lastToggleTime = 0;
+        this.overridePhase = null;
         this.init();
     }
 
@@ -45,6 +46,7 @@ class ParchmentScrolls {
         this.closeAll();
 
         if (!isOpen) {
+            this.overridePhase = null;
             tab.classList.add('open');
             tab.setAttribute('aria-hidden', 'false');
             document.body.classList.add('scroll-mode-active');
@@ -85,47 +87,77 @@ class ParchmentScrolls {
     loadScrollContent(type, providedDay = null) {
         const state = window.cycleStore.getState();
         const day = providedDay || state.getSelectedDay();
-        const phase = getPhaseFromDay(day, state.settings.cycleLength);
+        const currentPhase = getPhaseFromDay(day, state.settings.cycleLength);
+
+        // Use override phase if set, otherwise current
+        const phase = this.overridePhase || currentPhase;
         const data = getPhaseData(phase);
 
         const container = document.getElementById(`${type}-content`);
         if (!container || !data) return;
 
+        // Build phase tabs
+        const phases = ['menstrual', 'follicular', 'ovulatory', 'luteal'];
+        const phaseLabels = { menstrual: 'Menstrual', follicular: 'Follicular', ovulatory: 'Ovulatory', luteal: 'Luteal' };
+        const tabsHtml = `<div class="phase-tabs">${phases.map(p => 
+            `<button type="button" class="phase-tab ${p === phase ? 'active' : ''}" data-phase="${p}">${phaseLabels[p]}</button>`
+        ).join('')}</div>`;
+
         if (type === 'nourishment') {
-            this.renderNourishment(container, data.nourishment);
+            this.renderNourishment(container, data.nourishment, tabsHtml);
         }
 
         if (type === 'asanas') {
-            this.renderAsanas(container, data.asanas);
+            this.renderAsanas(container, data.asanas, tabsHtml);
         }
+
+        // Bind phase tab clicks
+        container.querySelectorAll('.phase-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                this.overridePhase = tab.dataset.phase;
+                this.loadScrollContent(type, day);
+            });
+        });
     }
 
-    renderNourishment(el, info) {
+    renderNourishment(el, info, tabsHtml = '') {
         el.innerHTML = `
+            ${tabsHtml}
             <div class="panel-stack">
                 <p>${info.intro}</p>
-                <ul>
-                    ${info.foods.map((food) => `
-                        <li><strong>${food.name}:</strong> ${food.benefit}</li>
-                    `).join('')}
-                </ul>
-                <div class="panel-card panel-highlight">${info.highlight}</div>
+                ${info.foods.map((food) => `
+                    <div class="panel-card food-card">
+                        <div class="food-header">
+                            <strong>${food.name}</strong>
+                            <span class="food-benefit">${food.benefit}</span>
+                        </div>
+                        ${food.detail ? `<p class="food-detail">${food.detail}</p>` : ''}
+                        ${food.link ? `<a href="${food.link}" target="_blank" rel="noopener" class="food-link">🔗 Recipe / Reference</a>` : ''}
+                    </div>
+                `).join('')}
+                ${info.avoid?.length ? `<div class="panel-card panel-avoid"><strong>🚫 Avoid:</strong><ul class="avoid-list">${info.avoid.map(a => `<li>${a}</li>`).join('')}</ul></div>` : ''}
+                <div class="panel-card panel-highlight">💡 ${info.highlight}</div>
             </div>
         `;
     }
 
-    renderAsanas(el, info) {
+    renderAsanas(el, info, tabsHtml = '') {
         el.innerHTML = `
+            ${tabsHtml}
             <div class="panel-stack">
                 <p>${info.intro}</p>
                 ${info.practices.map((item) => `
-                    <div class="panel-card">
-                        <h4>${item.name}</h4>
-                        <p class="history-meta">${item.duration}</p>
+                    <div class="panel-card asana-card">
+                        <div class="asana-header">
+                            <h4>${item.name}</h4>
+                            <span class="asana-duration">${item.duration}</span>
+                        </div>
                         <p>${item.desc}</p>
+                        ${item.link ? `<a href="${item.link}" target="_blank" rel="noopener" class="food-link">📖 Learn More</a>` : ''}
                     </div>
                 `).join('')}
-                <div class="panel-card panel-highlight">${info.highlight}</div>
+                ${info.avoid?.length ? `<div class="panel-card panel-avoid"><strong>🚫 Avoid:</strong><ul class="avoid-list">${info.avoid.map(a => `<li>${a}</li>`).join('')}</ul></div>` : ''}
+                <div class="panel-card panel-highlight">💡 ${info.highlight}</div>
             </div>
         `;
     }

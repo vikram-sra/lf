@@ -217,11 +217,15 @@ class LotusDial {
     renderCycleRing() {
         const state = window.cycleStore.getState();
         const currentPhase = state.getCurrentPhase();
+        const lastPeriodStart = new Date(state.settings.lastPeriodStart);
 
         const step = 360 / this.cycleLength;
         const innerRadius = 85;
         const petalHeight = 65;
         const overlap = step * 1.5;
+
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
         for (let i = 0; i < this.cycleLength; i++) {
             const day = i + 1;
@@ -258,8 +262,50 @@ class LotusDial {
             text.style.pointerEvents = 'none';
             text.textContent = String(day);
 
+            // Subtle date label on outside of petal
+            const actualDate = new Date(lastPeriodStart);
+            actualDate.setDate(actualDate.getDate() + (day - 1));
+            const dateLabel = `${monthNames[actualDate.getMonth()]} ${actualDate.getDate()}`;
+            const dayLabel = dayNames[actualDate.getDay()];
+
+            const dateLabelPos = this.getPointAt(angle, innerRadius + petalHeight + 14);
+            const dateText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            dateText.setAttribute('x', dateLabelPos.x);
+            dateText.setAttribute('y', dateLabelPos.y);
+            dateText.setAttribute('text-anchor', 'middle');
+            dateText.setAttribute('dominant-baseline', 'middle');
+            dateText.setAttribute('fill', '#ffffff');
+            dateText.setAttribute('fill-opacity', day === this.currentDay ? '0.65' : '0.28');
+            dateText.setAttribute('font-size', this.cycleLength > 30 ? '5px' : '6.5px');
+            dateText.setAttribute('font-weight', '400');
+            dateText.setAttribute('font-family', "'Cormorant Garamond', serif");
+            dateText.setAttribute('letter-spacing', '0.03em');
+            dateText.setAttribute('transform', `rotate(${angle + 90}, ${dateLabelPos.x}, ${dateLabelPos.y})`);
+            dateText.style.pointerEvents = 'none';
+            dateText.textContent = dateLabel;
+
+            // Day-of-week label, even more subtle
+            const dayLabelPos = this.getPointAt(angle, innerRadius + petalHeight + 23);
+            const dayText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            dayText.setAttribute('x', dayLabelPos.x);
+            dayText.setAttribute('y', dayLabelPos.y);
+            dayText.setAttribute('text-anchor', 'middle');
+            dayText.setAttribute('dominant-baseline', 'middle');
+            dayText.setAttribute('fill', '#ffffff');
+            dayText.setAttribute('fill-opacity', day === this.currentDay ? '0.50' : '0.18');
+            dayText.setAttribute('font-size', this.cycleLength > 30 ? '4px' : '5px');
+            dayText.setAttribute('font-weight', '300');
+            dayText.setAttribute('font-family', "'Outfit', sans-serif");
+            dayText.setAttribute('text-transform', 'uppercase');
+            dayText.setAttribute('letter-spacing', '0.08em');
+            dayText.setAttribute('transform', `rotate(${angle + 90}, ${dayLabelPos.x}, ${dayLabelPos.y})`);
+            dayText.style.pointerEvents = 'none';
+            dayText.textContent = dayLabel;
+
             group.appendChild(path);
             group.appendChild(text);
+            group.appendChild(dateText);
+            group.appendChild(dayText);
             group.addEventListener('click', () => this.selectDay(day));
             this.innerPetalsGroup.appendChild(group);
         }
